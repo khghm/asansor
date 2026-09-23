@@ -51,7 +51,7 @@ export const initialProducts: Product[] = [
     description: 'موتور گیربکس‌دار با توان بالا مناسب ساختمان‌های مسکونی تا ۶ طبقه',
     price: 45000000,
     category: 'موتور آسانسور',
-    image: '🏗️',
+    image: 'https://image.qwenlm.ai/generated-images/77b053a1-6541-4d60-a845-6858b0cebbe2/_result.png',
     stock: 12,
     featured: true
   },
@@ -61,7 +61,7 @@ export const initialProducts: Product[] = [
     description: 'تابلو فرمان تمام دیجیتال با قابلیت تنظیمات پیشرفته و عیب‌یابی خودکار',
     price: 18000000,
     category: 'تابلو فرمان',
-    image: '🖥️',
+    image: 'https://image.qwenlm.ai/generated-images/a5b5b534-8b3c-454b-9b78-132eb8721c5d/_result.png',
     stock: 25,
     featured: true
   },
@@ -71,7 +71,7 @@ export const initialProducts: Product[] = [
     description: 'ریلس استاندارد T89/A با طول ۳ متر، ساخت ایران با کیفیت بالا',
     price: 2500000,
     category: 'ریلس و ریل‌براکت',
-    image: '📏',
+    image: 'https://image.qwenlm.ai/generated-images/86d6fc9f-83c3-4970-b384-a181365ac824/_result.png',
     stock: 50,
     featured: false
   },
@@ -81,7 +81,7 @@ export const initialProducts: Product[] = [
     description: 'سیم بکسل فولادی ۸ میلیمتر با روکش گالوانیزه، مناسب آسانسور',
     price: 850000,
     category: 'سیم بکسل',
-    image: '🔗',
+    image: 'https://image.qwenlm.ai/generated-images/84120c7b-25c8-4f69-8309-d1ea163e7daa/_result.png',
     stock: 100,
     featured: true
   },
@@ -91,7 +91,7 @@ export const initialProducts: Product[] = [
     description: 'درب اتوماتیک تلسکوپی با سنسور ایمنی و موتور قدرتمند',
     price: 32000000,
     category: 'درب آسانسور',
-    image: '🚪',
+    image: 'https://image.qwenlm.ai/generated-images/d24ca3b7-3da0-41b1-8dff-5737335beb3f/_result.png',
     stock: 8,
     featured: true
   },
@@ -101,7 +101,7 @@ export const initialProducts: Product[] = [
     description: 'کابین آسانسور با روکش استیل طلایی و آینه قدی، لوکس و مدرن',
     price: 55000000,
     category: 'کابین و دکوراسیون',
-    image: '✨',
+    image: 'https://image.qwenlm.ai/generated-images/6c4f2564-e89b-4156-8499-7b6190acb000/_result.png',
     stock: 5,
     featured: true
   },
@@ -111,7 +111,7 @@ export const initialProducts: Product[] = [
     description: 'اینورتر VVVF با قابلیت تنظیم سرعت و کاهش مصرف انرژی',
     price: 22000000,
     category: 'قطعات الکتریکی',
-    image: '⚡',
+    image: 'https://image.qwenlm.ai/generated-images/bbaf738d-3363-4d99-acee-769bfe58d658/_result.png',
     stock: 15,
     featured: false
   },
@@ -121,7 +121,7 @@ export const initialProducts: Product[] = [
     description: 'ترمز الکترومکانیکی با قدرت توقف بالا و عمر طولانی',
     price: 8500000,
     category: 'قطعات مکانیکی',
-    image: '🔧',
+    image: 'https://image.qwenlm.ai/generated-images/e1abafa0-8f55-4c30-b1e1-9e99628be4d1/_result.png',
     stock: 20,
     featured: false
   },
@@ -131,7 +131,7 @@ export const initialProducts: Product[] = [
     description: 'سیستم پاراشوت ایمنی برای جلوگیری از سقوط کابین',
     price: 12000000,
     category: 'سیستم ایمنی',
-    image: '🛡️',
+    image: 'https://image.qwenlm.ai/generated-images/24aee46e-47d7-4abb-87bb-f7350c0795a4/_result.png',
     stock: 18,
     featured: true
   },
@@ -141,7 +141,7 @@ export const initialProducts: Product[] = [
     description: 'چشمی فتوالکتریک برای تشخیص مانع در مسیر درب',
     price: 1500000,
     category: 'لوازم جانبی',
-    image: '👁️',
+    image: 'https://image.qwenlm.ai/generated-images/24aee46e-47d7-4abb-87bb-f7350c0795a4/_result.png',
     stock: 40,
     featured: false
   },
@@ -151,7 +151,7 @@ export const initialProducts: Product[] = [
     description: 'شستی لمسی احضار طبقات با نمایشگر LED و طراحی مدرن',
     price: 3500000,
     category: 'قطعات الکتریکی',
-    image: '🔢',
+    image: 'https://image.qwenlm.ai/generated-images/a5b5b534-8b3c-454b-9b78-132eb8721c5d/_result.png',
     stock: 30,
     featured: false
   },
@@ -161,7 +161,7 @@ export const initialProducts: Product[] = [
     description: 'موتور گیرلس با راندمان بالا، صدای کم و مصرف انرژی پایین',
     price: 65000000,
     category: 'موتور آسانسور',
-    image: '⚙️',
+    image: 'https://image.qwenlm.ai/generated-images/d3c175c7-1d01-4d0b-8f5d-2790895f5ad7/_result.png',
     stock: 6,
     featured: true
   }
