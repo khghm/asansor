@@ -6,6 +6,7 @@ import {
   Star, ShoppingCart, Zap, Award, Users, ChevronLeft,
   Building2, Cog, RefreshCw, Headphones, MessageCircle, Eye
 } from 'lucide-react';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 const HomePage: React.FC = () => {
   const { products, addToCart } = useStore();
@@ -140,11 +141,10 @@ const HomePage: React.FC = () => {
               >
                 <Link to={`/product/${product.id}`} className="block">
                 <div className="relative h-56 bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
-                  <img 
-                    src={product.image} 
+                  <ImageWithFallback
+                    src={product.image}
                     alt={product.name}
                     className="w-full h-full object-cover img-zoom"
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"%3E%3Cpath d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"%3E%3C/path%3E%3C/svg%3E'; }}
                   />                    <div className="absolute top-4 right-4">
                       <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-bold rounded-full shadow-sm">
                         {product.category}
