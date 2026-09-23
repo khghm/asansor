@@ -1,0 +1,242 @@
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image: string;
+  stock: number;
+  featured: boolean;
+}
+
+export interface Order {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  customerAddress: string;
+  items: { productId: string; productName: string; quantity: number; price: number }[];
+  total: number;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  date: string;
+}
+
+export interface ServiceRequest {
+  id: string;
+  name: string;
+  phone: string;
+  address: string;
+  serviceType: 'installation' | 'repair' | 'maintenance';
+  description: string;
+  status: 'new' | 'in-progress' | 'completed';
+  date: string;
+}
+
+export const categories = [
+  'موتور آسانسور',
+  'تابلو فرمان',
+  'ریلس و ریل‌براکت',
+  'سیم بکسل',
+  'درب آسانسور',
+  'کابین و دکوراسیون',
+  'قطعات الکتریکی',
+  'قطعات مکانیکی',
+  'سیستم ایمنی',
+  'لوازم جانبی'
+];
+
+export const initialProducts: Product[] = [
+  {
+    id: '1',
+    name: 'موتور آسانسور ۶ نفره',
+    description: 'موتور گیربکس‌دار با توان بالا مناسب ساختمان‌های مسکونی تا ۶ طبقه',
+    price: 45000000,
+    category: 'موتور آسانسور',
+    image: '🏗️',
+    stock: 12,
+    featured: true
+  },
+  {
+    id: '2',
+    name: 'تابلو فرمان آسانسور دیجیتال',
+    description: 'تابلو فرمان تمام دیجیتال با قابلیت تنظیمات پیشرفته و عیب‌یابی خودکار',
+    price: 18000000,
+    category: 'تابلو فرمان',
+    image: '🖥️',
+    stock: 25,
+    featured: true
+  },
+  {
+    id: '3',
+    name: 'ریلس T89/A (۳ متر)',
+    description: 'ریلس استاندارد T89/A با طول ۳ متر، ساخت ایران با کیفیت بالا',
+    price: 2500000,
+    category: 'ریلس و ریل‌براکت',
+    image: '📏',
+    stock: 50,
+    featured: false
+  },
+  {
+    id: '4',
+    name: 'سیم بکسل ۸ میلیمتر',
+    description: 'سیم بکسل فولادی ۸ میلیمتر با روکش گالوانیزه، مناسب آسانسور',
+    price: 850000,
+    category: 'سیم بکسل',
+    image: '🔗',
+    stock: 100,
+    featured: true
+  },
+  {
+    id: '5',
+    name: 'درب اتوماتیک تلسکوپی',
+    description: 'درب اتوماتیک تلسکوپی با سنسور ایمنی و موتور قدرتمند',
+    price: 32000000,
+    category: 'درب آسانسور',
+    image: '🚪',
+    stock: 8,
+    featured: true
+  },
+  {
+    id: '6',
+    name: 'کابین استیل طلایی',
+    description: 'کابین آسانسور با روکش استیل طلایی و آینه قدی، لوکس و مدرن',
+    price: 55000000,
+    category: 'کابین و دکوراسیون',
+    image: '✨',
+    stock: 5,
+    featured: true
+  },
+  {
+    id: '7',
+    name: 'اینورتر آسانسور',
+    description: 'اینورتر VVVF با قابلیت تنظیم سرعت و کاهش مصرف انرژی',
+    price: 22000000,
+    category: 'قطعات الکتریکی',
+    image: '⚡',
+    stock: 15,
+    featured: false
+  },
+  {
+    id: '8',
+    name: 'ترمز الکترومکانیکی',
+    description: 'ترمز الکترومکانیکی با قدرت توقف بالا و عمر طولانی',
+    price: 8500000,
+    category: 'قطعات مکانیکی',
+    image: '🔧',
+    stock: 20,
+    featured: false
+  },
+  {
+    id: '9',
+    name: 'پاراشوت (ترمز اضطراری)',
+    description: 'سیستم پاراشوت ایمنی برای جلوگیری از سقوط کابین',
+    price: 12000000,
+    category: 'سیستم ایمنی',
+    image: '🛡️',
+    stock: 18,
+    featured: true
+  },
+  {
+    id: '10',
+    name: 'چشمی درب آسانسور',
+    description: 'چشمی فتوالکتریک برای تشخیص مانع در مسیر درب',
+    price: 1500000,
+    category: 'لوازم جانبی',
+    image: '👁️',
+    stock: 40,
+    featured: false
+  },
+  {
+    id: '11',
+    name: 'شستی احضار طبقات',
+    description: 'شستی لمسی احضار طبقات با نمایشگر LED و طراحی مدرن',
+    price: 3500000,
+    category: 'قطعات الکتریکی',
+    image: '🔢',
+    stock: 30,
+    featured: false
+  },
+  {
+    id: '12',
+    name: 'موتور بدون گیربکس (Gearless)',
+    description: 'موتور گیرلس با راندمان بالا، صدای کم و مصرف انرژی پایین',
+    price: 65000000,
+    category: 'موتور آسانسور',
+    image: '⚙️',
+    stock: 6,
+    featured: true
+  }
+];
+
+export const initialOrders: Order[] = [
+  {
+    id: 'ORD-001',
+    customerName: 'علی محمدی',
+    customerPhone: '09121234567',
+    customerAddress: 'تهران، خیابان ولیعصر، پلاک ۱۲۳',
+    items: [
+      { productId: '1', productName: 'موتور آسانسور ۶ نفره', quantity: 1, price: 45000000 },
+      { productId: '4', productName: 'سیم بکسل ۸ میلیمتر', quantity: 4, price: 850000 }
+    ],
+    total: 48400000,
+    status: 'processing',
+    date: '1403/09/15'
+  },
+  {
+    id: 'ORD-002',
+    customerName: 'رضا احمدی',
+    customerPhone: '09351234567',
+    customerAddress: 'اصفهان، خیابان چهارباغ، پلاک ۴۵',
+    items: [
+      { productId: '2', productName: 'تابلو فرمان آسانسور دیجیتال', quantity: 1, price: 18000000 }
+    ],
+    total: 18000000,
+    status: 'pending',
+    date: '1403/09/18'
+  },
+  {
+    id: 'ORD-003',
+    customerName: 'مریم حسینی',
+    customerPhone: '09131234567',
+    customerAddress: 'شیراز، بلوار چمران، پلاک ۷۸',
+    items: [
+      { productId: '5', productName: 'درب اتوماتیک تلسکوپی', quantity: 1, price: 32000000 },
+      { productId: '10', productName: 'چشمی درب آسانسور', quantity: 2, price: 1500000 }
+    ],
+    total: 35000000,
+    status: 'delivered',
+    date: '1403/09/10'
+  }
+];
+
+export const initialServiceRequests: ServiceRequest[] = [
+  {
+    id: 'SRV-001',
+    name: 'حسن کریمی',
+    phone: '09121111111',
+    address: 'تهران، سعادت آباد، بلوار دریا',
+    serviceType: 'repair',
+    description: 'آسانسور در طبقه سوم متوقف شده و حرکت نمی‌کند',
+    status: 'in-progress',
+    date: '1403/09/16'
+  },
+  {
+    id: 'SRV-002',
+    name: 'فاطمه رضایی',
+    phone: '09352222222',
+    address: 'تهران، ونک، خیابان ملاصدرا',
+    serviceType: 'maintenance',
+    description: 'سرویس دوره‌ای آسانسور ۸ طبقه',
+    status: 'new',
+    date: '1403/09/19'
+  },
+  {
+    id: 'SRV-003',
+    name: 'محمد نوری',
+    phone: '09133333333',
+    address: 'کرج، مهرشهر، فاز ۳',
+    serviceType: 'installation',
+    description: 'نصب آسانسور جدید برای ساختمان ۵ طبقه',
+    status: 'new',
+    date: '1403/09/20'
+  }
+];
