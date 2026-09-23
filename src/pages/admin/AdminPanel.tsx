@@ -299,6 +299,7 @@ const AdminPanel: React.FC = () => {
                         <ImageWithFallback
                           src={p.image}
                           alt={p.name}
+                          category={p.category}
                           className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                         />
                         <div>
@@ -349,6 +350,7 @@ const AdminPanel: React.FC = () => {
                               <ImageWithFallback
                                 src={product.image}
                                 alt={product.name}
+                                category={product.category}
                                 className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                               />
                               <div>
