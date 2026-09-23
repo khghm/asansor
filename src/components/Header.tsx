@@ -36,14 +36,15 @@ const Header: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <div className="w-11 h-11 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all duration-300">
-                <Building2 className="text-white" size={22} />
+              <div className="w-11 h-11 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/50 transition-all duration-300 relative overflow-hidden">
+                <Building2 className="text-white relative z-10" size={22} />
+                <div className="absolute inset-0 shimmer"></div>
               </div>
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white"></div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-extrabold bg-gradient-to-l from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                آسانسور آرمند
+              <h1 className="text-lg font-extrabold bg-gradient-to-l from-orange-600 to-amber-500 bg-clip-text text-transparent">
+                مهندسی آرمند
               </h1>
               <p className="text-[11px] text-slate-500 font-medium -mt-0.5">لوازم یدکی و خدمات تخصصی</p>
             </div>
@@ -57,13 +58,13 @@ const Header: React.FC = () => {
                 to={link.path}
                 className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive(link.path) 
-                    ? 'text-blue-600 bg-blue-50' 
-                    : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
+                    ? 'text-orange-600 bg-orange-50' 
+                    : 'text-slate-600 hover:text-orange-600 hover:bg-orange-50'
                 }`}
               >
                 {link.label}
                 {isActive(link.path) && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-blue-600 rounded-full"></span>
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-orange-600 rounded-full"></span>
                 )}
               </Link>
             ))}

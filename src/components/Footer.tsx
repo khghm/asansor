@@ -10,12 +10,13 @@ const Footer: React.FC = () => {
           {/* About */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                <Building2 className="text-white" size={22} />
+              <div className="w-11 h-11 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center relative overflow-hidden">
+                <Building2 className="text-white relative z-10" size={22} />
+                <div className="absolute inset-0 shimmer"></div>
               </div>
               <div>
-                <h3 className="text-white font-extrabold text-lg">آسانسور آرمند</h3>
-                <p className="text-xs text-slate-400">از ۱۳۸۸ در خدمت شما</p>
+                <h3 className="text-white font-extrabold text-lg">مهندسی آرمند</h3>
+                <p className="text-xs text-slate-400">مهندسی سعید آرمند</p>
               </div>
             </div>
             <p className="text-sm leading-7 text-slate-400">
@@ -46,7 +47,7 @@ const Footer: React.FC = () => {
               ].map(link => (
                 <li key={link.to}>
                   <Link to={link.to} className="text-sm text-slate-400 hover:text-white hover:pr-1 transition-all duration-200 flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-blue-500"></span>
+                    <span className="w-1 h-1 rounded-full bg-orange-500"></span>
                     {link.label}
                   </Link>
                 </li>
@@ -73,16 +74,25 @@ const Footer: React.FC = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Phone size={14} className="text-blue-400" />
+                  <Phone size={14} className="text-orange-400" />
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-0.5">تلفن تماس</p>
-                  <p className="text-sm text-slate-300">۰۲۱-۱۲۳۴۵۶۷۸</p>
+                  <p className="text-xs text-slate-500 mb-0.5">تلفن تماس اول</p>
+                  <p className="text-sm text-slate-300">۰۹۳۵۴۸۱۷۷۶۶</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <MapPin size={14} className="text-blue-400" />
+                  <Phone size={14} className="text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 mb-0.5">تلفن تماس دوم</p>
+                  <p className="text-sm text-slate-300">۰۹۱۹۱۶۷۴۷۶۲</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <MapPin size={14} className="text-orange-400" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">آدرس</p>
@@ -91,7 +101,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Clock size={14} className="text-blue-400" />
+                  <Clock size={14} className="text-orange-400" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">ساعات کاری</p>
@@ -100,7 +110,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Mail size={14} className="text-blue-400" />
+                  <Mail size={14} className="text-orange-400" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">ایمیل</p>
