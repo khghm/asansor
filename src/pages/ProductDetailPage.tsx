@@ -51,17 +51,17 @@ const ProductDetailPage: React.FC = () => {
     .slice(0, 4);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-8">
-        <Link to="/" className="hover:text-blue-600 transition-colors">خانه</Link>
-        <ChevronLeft size={14} />
-        <Link to="/products" className="hover:text-blue-600 transition-colors">محصولات</Link>
-        <ChevronLeft size={14} />
-        <span className="text-slate-900 font-medium">{product.name}</span>
+      <nav className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-slate-500 mb-4 sm:mb-6 lg:mb-8 overflow-x-auto">
+        <Link to="/" className="hover:text-orange-600 transition-colors whitespace-nowrap">خانه</Link>
+        <ChevronLeft size={12} className="sm:w-[14px] sm:h-[14px] flex-shrink-0" />
+        <Link to="/products" className="hover:text-orange-600 transition-colors whitespace-nowrap">محصولات</Link>
+        <ChevronLeft size={12} className="sm:w-[14px] sm:h-[14px] flex-shrink-0" />
+        <span className="text-slate-900 font-medium truncate">{product.name}</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-10 mb-8 sm:mb-12 lg:mb-16">
         {/* Product Image */}
         <div className="space-y-4">
           <div className="bg-gradient-to-br from-slate-100 to-slate-50 rounded-2xl overflow-hidden aspect-square relative group">

@@ -29,83 +29,12 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-bl from-slate-900 via-orange-900 to-amber-900 text-white overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-500 rounded-full blur-[100px]"></div>
-        </div>
-        <div className="absolute inset-0" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6 animate-fade-in">
-              <Zap size={14} className="text-yellow-400" />
-              <span className="text-sm font-medium">مهندسی سعید آرمند - بیش از ۱۵ سال تجربه</span>
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight animate-fade-in-up">
-              فروشگاه لوازم یدکی
-              <br />
-              <span className="bg-gradient-to-l from-orange-300 via-amber-300 to-orange-400 bg-clip-text text-transparent">
-                آسانسور آرمند
-              </span>
-            </h1>
-            
-            <p className="text-lg md:text-xl text-blue-100/80 mb-10 leading-8 max-w-2xl animate-fade-in-up" style={{animationDelay: '0.1s'}}>
-              ارائه‌دهنده انواع لوازم یدکی آسانسور با کیفیت تضمینی و خدمات نصب و تعمیر توسط متخصصین مجرب با بیش از یک دهه تجربه
-            </p>
-            
-            <div className="flex flex-wrap gap-4 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-              <Link 
-                to="/products" 
-                className="group bg-gradient-to-l from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-7 py-3.5 rounded-xl font-bold transition-all duration-300 shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105 flex items-center gap-2 relative overflow-hidden"
-              >
-                <span className="relative z-10">مشاهده محصولات</span>
-                <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform relative z-10" />
-                <div className="absolute inset-0 shimmer"></div>
-              </Link>
-              <Link 
-                to="/services" 
-                className="group border-2 border-white/30 hover:border-white/60 hover:bg-white/10 backdrop-blur-sm text-white px-7 py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center gap-2"
-              >
-                <Wrench size={18} />
-                <span>خدمات نصب و تعمیر</span>
-              </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 mt-16 max-w-lg animate-fade-in-up" style={{animationDelay: '0.3s'}}>
-              {[
-                { value: '+۱۵', label: 'سال تجربه' },
-                { value: '+۵۰۰۰', label: 'مشتری راضی' },
-                { value: '+۲۲', label: 'محصول متنوع' },
-              ].map((stat, i) => (
-                <div key={i} className="text-center">
-                  <p className="text-2xl md:text-3xl font-black text-white">{stat.value}</p>
-                  <p className="text-xs text-blue-200/70 mt-1">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Hero Carousel */}
-      <section className="py-12 bg-gradient-to-b from-slate-900 to-orange-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">محصولات ویژه</h2>
-            <p className="text-orange-200/80">بهترین محصولات ما را مشاهده کنید</p>
-          </div>
-          <HeroCarousel />
-        </div>
-      </section>
+      {/* Hero Carousel - Integrated */}
+      <HeroCarousel />
 
       {/* Features */}
-      <section className="py-12 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-6 sm:py-8 lg:py-12 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {[
               { icon: <Truck size={24} />, title: 'ارسال سریع', desc: 'به سراسر کشور', color: 'from-blue-500 to-blue-600' },
@@ -128,9 +57,9 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Featured Products */}
-      <section className="py-20 bg-gradient-to-b from-orange-50 to-amber-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-12">
+      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-orange-50 to-amber-50">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+          <div className="flex items-end justify-between mb-6 sm:mb-8 lg:mb-12">
             <div>
               <span className="text-sm font-bold text-orange-600 uppercase tracking-wider">محصولات ویژه</span>
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mt-2">پرفروش‌ترین محصولات</h2>
@@ -232,9 +161,9 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Services Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+      <section className="py-8 sm:py-12 lg:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+          <div className="text-center mb-6 sm:mb-8 lg:mb-12">
             <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">خدمات تخصصی</span>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 mt-2">خدمات حرفه‌ای ما</h2>
             <p className="text-slate-500 mt-3 max-w-2xl mx-auto">
@@ -307,9 +236,9 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
+      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-slate-50 to-white">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+          <div className="text-center mb-6 sm:mb-8 lg:mb-12">
             <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">نظرات مشتریان</span>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 mt-2">رضایت مشتریان، افتخار ماست</h2>
           </div>
@@ -346,11 +275,11 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-orange-600 via-orange-700 to-amber-800 text-white relative overflow-hidden">
+      <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-br from-orange-600 via-orange-700 to-amber-800 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white rounded-full blur-[100px]"></div>
         </div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-black mb-4">نیاز به مشاوره رایگان دارید؟</h2>
           <p className="text-orange-100 mb-10 text-lg">با مهندسی سعید آرمند تماس بگیرید</p>
           <div className="flex flex-wrap justify-center gap-4">

@@ -36,17 +36,17 @@ const ProductsPage: React.FC = () => {
   else if (sortBy === 'name') filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name, 'fa'));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-10">
       {/* Header */}
-      <div className="mb-10">
-        <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">فروشگاه</span>
-        <h1 className="text-3xl md:text-4xl font-black text-slate-900 mt-2">محصولات فروشگاه</h1>
-        <p className="text-slate-500 mt-2">تمامی لوازم یدکی آسانسور با ضمانت اصالت و کیفیت</p>
+      <div className="mb-4 sm:mb-6 lg:mb-10">
+        <span className="text-xs sm:text-sm font-bold text-orange-600 uppercase tracking-wider">فروشگاه</span>
+        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 mt-1 sm:mt-2">محصولات فروشگاه</h1>
+        <p className="text-slate-500 mt-1 sm:mt-2 text-sm sm:text-base">تمامی لوازم یدکی آسانسور با ضمانت اصالت و کیفیت</p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 p-3 sm:p-4 lg:p-5 mb-4 sm:mb-6 lg:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           <div className="relative">
             <Search size={18} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
@@ -97,14 +97,14 @@ const ProductsPage: React.FC = () => {
           <p className="text-slate-400 text-sm mt-2">لطفاً فیلترها را تغییر دهید</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {filtered.map((product, index) => (
             <div 
               key={product.id} 
-              className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-slate-100 card-hover"
+              className="group bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-slate-100 card-hover"
             >
               <Link to={`/product/${product.id}`} className="block">
-                <div className="relative h-52 bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
+                <div className="relative h-36 sm:h-44 md:h-52 bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
                   <ImageWithFallback
                     src={product.image}
                     alt={product.name}
