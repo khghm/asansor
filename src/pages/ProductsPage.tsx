@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
-import { Search, Filter, ShoppingCart, Check, Package } from 'lucide-react';
+import { Search, Filter, ShoppingCart, Check, Package, Eye } from 'lucide-react';
 import { categories } from '../data/store';
 
 const ProductsPage: React.FC = () => {
@@ -101,29 +102,40 @@ const ProductsPage: React.FC = () => {
               key={product.id} 
               className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-slate-100 card-hover"
             >
-              <div className="relative h-52 bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-full h-full object-cover img-zoom"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-bold rounded-full shadow-sm">
-                    {product.category}
-                  </span>
-                </div>
-                {product.stock < 10 && (
-                  <div className="absolute top-3 left-3">
-                    <span className="px-2.5 py-1 bg-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
-                      موجودی محدود
+              <Link to={`/product/${product.id}`} className="block">
+                <div className="relative h-52 bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-full object-cover img-zoom"
+                    onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"%3E%3Cpath d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"%3E%3C/path%3E%3C/svg%3E'; }}
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span className="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-bold rounded-full shadow-sm">
+                      {product.category}
                     </span>
                   </div>
-                )}
-              </div>
+                  {product.stock < 10 && (
+                    <div className="absolute top-3 left-3">
+                      <span className="px-2.5 py-1 bg-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
+                        موجودی محدود
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg">
+                      <Eye size={16} className="text-blue-600" />
+                      <span className="text-sm font-bold text-slate-800">مشاهده جزییات</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
               <div className="p-5">
-                <h3 className="font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">
-                  {product.name}
-                </h3>
+                <Link to={`/product/${product.id}`}>
+                  <h3 className="font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">
+                    {product.name}
+                  </h3>
+                </Link>
                 <p className="text-xs text-slate-500 mb-4 line-clamp-2 leading-6">
                   {product.description}
                 </p>
@@ -133,7 +145,7 @@ const ProductsPage: React.FC = () => {
                     <p className="font-black text-blue-600">{formatPrice(product.price)}</p>
                   </div>
                   <button
-                    onClick={() => handleAddToCart(product.id)}
+                    onClick={(e) => { e.preventDefault(); handleAddToCart(product.id); }}
                     className={`p-2.5 rounded-xl transition-all duration-300 ${
                       addedToCart === product.id
                         ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'

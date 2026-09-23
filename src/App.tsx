@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 import ServicesPage from './pages/ServicesPage';
 import CartPage from './pages/CartPage';
 import ContactPage from './pages/ContactPage';
@@ -22,7 +23,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-slate-50">
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
@@ -32,7 +33,7 @@ const PublicLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-slate-100">
       {children}
     </div>
   );
@@ -43,9 +44,9 @@ const NotFoundPage: React.FC = () => (
     <div className="flex items-center justify-center min-h-[60vh] px-4">
       <div className="text-center">
         <div className="text-7xl mb-4">🔍</div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">صفحه یافت نشد</h2>
-        <p className="text-gray-500 mb-6">صفحه مورد نظر وجود ندارد یا حذف شده است</p>
-        <a href="/" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg inline-block">
+        <h2 className="text-2xl font-black text-slate-900 mb-2">صفحه یافت نشد</h2>
+        <p className="text-slate-500 mb-6">صفحه مورد نظر وجود ندارد یا حذف شده است</p>
+        <a href="/" className="bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/30 inline-block">
           بازگشت به صفحه اصلی
         </a>
       </div>
@@ -61,6 +62,7 @@ const App: React.FC = () => {
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
           <Route path="/products" element={<PublicLayout><ProductsPage /></PublicLayout>} />
+          <Route path="/product/:id" element={<PublicLayout><ProductDetailPage /></PublicLayout>} />
           <Route path="/services" element={<PublicLayout><ServicesPage /></PublicLayout>} />
           <Route path="/cart" element={<PublicLayout><CartPage /></PublicLayout>} />
           <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
