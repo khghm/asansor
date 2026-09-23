@@ -1,24 +1,24 @@
 import React from 'react';
-import { Award, Users, Calendar, CheckCircle2, Building2, Target, Heart } from 'lucide-react';
+import { Award, Users, Calendar, CheckCircle2, Building2, Target, Heart, Phone } from 'lucide-react';
 
 const AboutPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="mb-12">
-        <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">درباره ما</span>
-        <h1 className="text-3xl md:text-4xl font-black text-slate-900 mt-2">فروشگاه آسانسور آرمند</h1>
+        <span className="text-sm font-bold text-orange-600 uppercase tracking-wider">درباره ما</span>
+        <h1 className="text-3xl md:text-4xl font-black text-slate-900 mt-2">مهندسی سعید آرمند</h1>
         <p className="text-slate-500 mt-3 max-w-2xl leading-7">
-          با بیش از ۱۵ سال تجربه در صنعت آسانسور، افتخار خدمت‌رسانی به هزاران مشتری در سراسر ایران را داریم
+          متخصص در طراحی، نصب و تعمیر انواع آسانسور با بیش از ۱۵ سال تجربه در صنعت آسانسور
         </p>
       </div>
 
       {/* About Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-7 md:p-9">
-          <h2 className="text-2xl font-black text-slate-900 mb-5">داستان ما</h2>
+          <h2 className="text-2xl font-black text-slate-900 mb-5">درباره مهندسی سعید آرمند</h2>
           <div className="space-y-4 text-slate-600 leading-8 text-sm">
             <p>
-              فروشگاه لوازم یدکی آسانسور آرمند با بیش از ۱۵ سال سابقه درخشان در صنعت آسانسور، یکی از معتبرترین مراکز فروش لوازم یدکی آسانسور و ارائه خدمات نصب و تعمیر در ایران است.
+              مهندسی سعید آرمند با بیش از ۱۵ سال سابقه درخشان در صنعت آسانسور، یکی از معتبرترین مراکز فروش لوازم یدکی آسانسور و ارائه خدمات نصب و تعمیر در ایران است.
             </p>
             <p>
               ما با تیمی متشکل از مهندسان و تکنسین‌های مجرب، همواره در تلاشیم تا بهترین محصولات و خدمات را با قیمت مناسب و کیفیت تضمین‌شده به مشتریان عزیز ارائه دهیم.
@@ -98,22 +98,26 @@ const AboutPage: React.FC = () => {
 
       {/* Team */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-7 md:p-9">
-        <h2 className="text-2xl font-black text-slate-900 mb-8 text-center">تیم مدیریت</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            { name: 'مهندس آرمند', role: 'مدیرعامل و بنیان‌گذار', desc: '۲۰ سال تجربه در صنعت آسانسور' },
-            { name: 'مهندس رضوی', role: 'مدیر فنی', desc: 'متخصص سیستم‌های الکترونیکی آسانسور' },
-            { name: 'مهندس کاظمی', role: 'سرپرست نصب', desc: '۱۵ سال تجربه در نصب و راه‌اندازی' },
-          ].map((member, i) => (
-            <div key={i} className="text-center p-6 rounded-xl hover:bg-slate-50 transition-colors">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
-                <Users size={32} className="text-white" />
-              </div>
-              <h3 className="font-black text-slate-900">{member.name}</h3>
-              <p className="text-sm text-blue-600 font-medium mb-2">{member.role}</p>
-              <p className="text-sm text-slate-500">{member.desc}</p>
-            </div>
-          ))}
+        <h2 className="text-2xl font-black text-slate-900 mb-8 text-center">مدیریت</h2>
+        <div className="text-center p-6">
+          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-orange-500/30">
+            <Users size={56} className="text-white" />
+          </div>
+          <h3 className="font-black text-slate-900 text-2xl">مهندسی سعید آرمند</h3>
+          <p className="text-lg text-orange-600 font-bold mb-3">مدیرعامل و بنیان‌گذار</p>
+          <p className="text-slate-600 leading-7 max-w-2xl mx-auto">
+            بیش از ۱۵ سال تجربه در طراحی، نصب و تعمیر انواع آسانسور. متخصص در سیستم‌های کنترل و ایمنی آسانسور با دانش فنی بالا و تجربه عملی گسترده.
+          </p>
+          <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="tel:09354817766" className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30">
+              <Phone size={18} />
+              <span>۰۹۳۵۴۸۱۷۷۶۶</span>
+            </a>
+            <a href="tel:09191674762" className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/30">
+              <Phone size={18} />
+              <span>۰۹۱۹۱۶۷۴۷۶۲</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>

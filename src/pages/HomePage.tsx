@@ -7,6 +7,7 @@ import {
   Building2, Cog, RefreshCw, Headphones, MessageCircle, Eye
 } from 'lucide-react';
 import ImageWithFallback from '../components/ImageWithFallback';
+import HeroCarousel from '../components/HeroCarousel';
 
 const HomePage: React.FC = () => {
   const { products, addToCart } = useStore();
@@ -29,11 +30,11 @@ const HomePage: React.FC = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-bl from-slate-900 via-blue-900 to-indigo-900 text-white overflow-hidden">
+      <section className="relative bg-gradient-to-bl from-slate-900 via-orange-900 to-amber-900 text-white overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-500 rounded-full blur-[100px]"></div>
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500 rounded-full blur-[120px]"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-500 rounded-full blur-[100px]"></div>
         </div>
         <div className="absolute inset-0" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
         
@@ -41,13 +42,13 @@ const HomePage: React.FC = () => {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6 animate-fade-in">
               <Zap size={14} className="text-yellow-400" />
-              <span className="text-sm font-medium">بیش از ۱۵ سال تجربه در صنعت آسانسور</span>
+              <span className="text-sm font-medium">مهندسی سعید آرمند - بیش از ۱۵ سال تجربه</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight animate-fade-in-up">
               فروشگاه لوازم یدکی
               <br />
-              <span className="bg-gradient-to-l from-blue-300 via-cyan-300 to-blue-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-l from-orange-300 via-amber-300 to-orange-400 bg-clip-text text-transparent">
                 آسانسور آرمند
               </span>
             </h1>
@@ -59,10 +60,11 @@ const HomePage: React.FC = () => {
             <div className="flex flex-wrap gap-4 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
               <Link 
                 to="/products" 
-                className="group bg-white text-blue-700 px-7 py-3.5 rounded-xl font-bold transition-all duration-300 shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 hover:scale-105 flex items-center gap-2"
+                className="group bg-gradient-to-l from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-7 py-3.5 rounded-xl font-bold transition-all duration-300 shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105 flex items-center gap-2 relative overflow-hidden"
               >
-                <span>مشاهده محصولات</span>
-                <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+                <span className="relative z-10">مشاهده محصولات</span>
+                <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform relative z-10" />
+                <div className="absolute inset-0 shimmer"></div>
               </Link>
               <Link 
                 to="/services" 
@@ -78,7 +80,7 @@ const HomePage: React.FC = () => {
               {[
                 { value: '+۱۵', label: 'سال تجربه' },
                 { value: '+۵۰۰۰', label: 'مشتری راضی' },
-                { value: '+۲۰۰', label: 'محصول متنوع' },
+                { value: '+۲۲', label: 'محصول متنوع' },
               ].map((stat, i) => (
                 <div key={i} className="text-center">
                   <p className="text-2xl md:text-3xl font-black text-white">{stat.value}</p>
@@ -87,6 +89,17 @@ const HomePage: React.FC = () => {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Hero Carousel */}
+      <section className="py-12 bg-gradient-to-b from-slate-900 to-orange-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">محصولات ویژه</h2>
+            <p className="text-orange-200/80">بهترین محصولات ما را مشاهده کنید</p>
+          </div>
+          <HeroCarousel />
         </div>
       </section>
 
@@ -115,17 +128,17 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Featured Products */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 bg-gradient-to-b from-orange-50 to-amber-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-12">
             <div>
-              <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">محصولات ویژه</span>
+              <span className="text-sm font-bold text-orange-600 uppercase tracking-wider">محصولات ویژه</span>
               <h2 className="text-3xl md:text-4xl font-black text-slate-900 mt-2">پرفروش‌ترین محصولات</h2>
               <p className="text-slate-500 mt-2">بهترین و پرفروش‌ترین محصولات فروشگاه</p>
             </div>
             <Link 
               to="/products" 
-              className="hidden md:flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold group"
+              className="hidden md:flex items-center gap-2 text-orange-600 hover:text-orange-700 font-bold group"
             >
               <span>مشاهده همه</span>
               <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
@@ -136,18 +149,18 @@ const HomePage: React.FC = () => {
             {featuredProducts.map((product, index) => (
               <div 
                 key={product.id} 
-                className="group bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden card-hover border border-slate-100"
+                className="group bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden card-hover border border-orange-100"
                 style={{animationDelay: `${index * 0.1}s`}}
               >
                 <Link to={`/product/${product.id}`} className="block">
-                <div className="relative h-56 bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
+                <div className="relative h-56 bg-gradient-to-br from-orange-50 to-amber-50 overflow-hidden">
                   <ImageWithFallback
                     src={product.image}
                     alt={product.name}
                     category={product.category}
                     className="w-full h-full object-cover img-zoom"
                   />                    <div className="absolute top-4 right-4">
-                      <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-slate-700 text-xs font-bold rounded-full shadow-sm">
+                      <span className="px-3 py-1 bg-orange-500/90 backdrop-blur-sm text-white text-xs font-bold rounded-full shadow-sm">
                         {product.category}
                       </span>
                     </div>
@@ -160,7 +173,7 @@ const HomePage: React.FC = () => {
                     )}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
                       <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg">
-                        <Eye size={16} className="text-blue-600" />
+                        <Eye size={16} className="text-orange-600" />
                         <span className="text-sm font-bold text-slate-800">مشاهده جزییات</span>
                       </div>
                     </div>
@@ -175,17 +188,17 @@ const HomePage: React.FC = () => {
                   <p className="text-sm text-slate-500 mb-4 line-clamp-2 leading-6">
                     {product.description}
                   </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between pt-4 border-t border-orange-100">
                     <div>
                       <p className="text-xs text-slate-400">قیمت</p>
-                      <p className="font-black text-blue-600 text-lg">{formatPrice(product.price)}</p>
+                      <p className="font-black text-orange-600 text-lg">{formatPrice(product.price)}</p>
                     </div>
                     <button
                       onClick={(e) => { e.preventDefault(); handleAddToCart(product.id); }}
                       className={`px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
                         addedToCart === product.id
                           ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50'
+                          : 'bg-gradient-to-l from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50'
                       }`}
                     >
                       {addedToCart === product.id ? (
@@ -333,20 +346,27 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-orange-600 via-orange-700 to-amber-800 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white rounded-full blur-[100px]"></div>
         </div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-black mb-4">نیاز به مشاوره رایگان دارید؟</h2>
-          <p className="text-blue-100 mb-10 text-lg">تیم متخصص ما آماده پاسخگویی به سوالات شماست</p>
+          <p className="text-orange-100 mb-10 text-lg">با مهندسی سعید آرمند تماس بگیرید</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a 
-              href="tel:02112345678" 
-              className="group bg-white text-blue-700 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3"
+              href="tel:09354817766" 
+              className="group bg-white text-orange-700 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3"
             >
               <Phone size={20} />
-              <span>۰۲۱-۱۲۳۴۵۶۷۸</span>
+              <span>۰۹۳۵۴۸۱۷۷۶۶</span>
+            </a>
+            <a 
+              href="tel:09191674762" 
+              className="group bg-amber-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-amber-600 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3"
+            >
+              <Phone size={20} />
+              <span>۰۹۱۹۱۶۷۴۷۶۲</span>
             </a>
             <Link 
               to="/contact" 

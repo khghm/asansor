@@ -164,6 +164,106 @@ export const initialProducts: Product[] = [
     image: 'https://image.qwenlm.ai/generated-images/bc73ed9f-5274-47f5-b945-3ae7a6c28f1a/_result.png',
     stock: 6,
     featured: true
+  },
+  {
+    id: '13',
+    name: 'گاورنر (سرعت‌سنج)',
+    description: 'دستگاه گاورنر برای کنترل سرعت آسانسور و جلوگیری از حرکت بیش از حد. این دستگاه حیاتی در سیستم ایمنی آسانسور نقش کلیدی دارد.',
+    price: 9500000,
+    category: 'سیستم ایمنی',
+    image: 'https://image.qwenlm.ai/generated-images/c5ccd7fa-5105-4714-9883-f104fd18409d/_result.png',
+    stock: 15,
+    featured: false
+  },
+  {
+    id: '14',
+    name: 'موتور اپراتور درب',
+    description: 'موتور مخصوص درب آسانسور با گیربکس داخلی، قدرتمند و کم‌صدا. مناسب برای درب‌های اتوماتیک تلسکوپی و لولایی.',
+    price: 12500000,
+    category: 'درب آسانسور',
+    image: 'https://image.qwenlm.ai/generated-images/48521dc2-bf73-4e9d-8cc3-1bb4f8186b04/_result.png',
+    stock: 20,
+    featured: false
+  },
+  {
+    id: '15',
+    name: 'بافر ضربه‌گیر',
+    description: 'بافر هیدرولیک یا فنری برای جذب ضربه در پایین چاهک آسانسور. این قطعه ایمنی حیاتی در مواقع سقوط احتمالی کابین عمل می‌کند.',
+    price: 7800000,
+    category: 'سیستم ایمنی',
+    image: 'https://image.qwenlm.ai/generated-images/88f6d479-3a9f-4be3-a140-045528896c77/_result.png',
+    stock: 25,
+    featured: false
+  },
+  {
+    id: '16',
+    name: 'کابل مسافرتی (Traveling Cable)',
+    description: 'کابل تخت چند رشته‌ای مخصوص آسانسور با کانکتورهای استاندارد. مناسب برای انتقال سیگنال و برق بین کابین و تابلو فرمان.',
+    price: 1200000,
+    category: 'قطعات الکتریکی',
+    image: 'https://image.qwenlm.ai/generated-images/d621f277-a1e5-445f-9281-09e90103e709/_result.png',
+    stock: 80,
+    featured: false
+  },
+  {
+    id: '17',
+    name: 'باکس بازرسی روی کابین',
+    description: 'جعبه کنترل بازرسی با دکمه توقف اضطراری و سوئیچ‌های بازرسی. مناسب برای تکنسین‌های servicing.',
+    price: 4500000,
+    category: 'قطعات الکتریکی',
+    image: 'https://image.qwenlm.ai/generated-images/070c25bf-82da-404c-b0ef-1ba5ed3ec909/_result.png',
+    stock: 18,
+    featured: false
+  },
+  {
+    id: '18',
+    name: 'وزنه تعادل (Counterweight)',
+    description: 'بلوک‌های وزنه چدنی برای تعادل کابین آسانسور. وزن دقیق بر اساس ظرفیت کابین محاسبه و تأمین می‌شود.',
+    price: 350000,
+    category: 'قطعات مکانیکی',
+    image: 'https://image.qwenlm.ai/generated-images/29bbc822-bd41-44b4-a284-bf3d507a0fa6/_result.png',
+    stock: 200,
+    featured: false
+  },
+  {
+    id: '19',
+    name: 'قفل درب (Interlock)',
+    description: 'قفل ایمنی درب طبقات با مکانیزم اینترلاک. این قطعه از باز شدن درب در زمانی که کابین در آن طبقه نیست جلوگیری می‌کند.',
+    price: 2800000,
+    category: 'سیستم ایمنی',
+    image: 'https://image.qwenlm.ai/generated-images/90b2a8c9-6461-451b-8d39-3d01bc3a9d90/_result.png',
+    stock: 35,
+    featured: false
+  },
+  {
+    id: '20',
+    name: 'سنسور موقعیت مغناطیسی',
+    description: 'سنسور مگنتی برای تشخیص موقعیت کابین با دقت بالا. مناسب برای سیستم‌های کنترل دقیق طبقات.',
+    price: 1800000,
+    category: 'قطعات الکتریکی',
+    image: 'https://image.qwenlm.ai/generated-images/0c38f46b-3b80-41ee-85e2-a01418a14090/_result.png',
+    stock: 45,
+    featured: false
+  },
+  {
+    id: '21',
+    name: 'تلفن اضطراری آسانسور',
+    description: 'سیستم ارتباط دوطرفه اضطراری با handset. در مواقع گیر کردن مسافران، امکان ارتباط با بیرون را فراهم می‌کند.',
+    price: 5200000,
+    category: 'سیستم ایمنی',
+    image: 'https://image.qwenlm.ai/generated-images/4c451c20-3557-451a-a006-dad0ae069f2d/_result.png',
+    stock: 22,
+    featured: false
+  },
+  {
+    id: '22',
+    name: 'فلکه کششی (Sheave)',
+    description: 'فلکه شیاردار فولادی برای سیم بکسل آسانسور. ماشین‌کاری دقیق با بالانس دینامیکی برای حرکت نرم و بی‌صدا.',
+    price: 15000000,
+    category: 'قطعات مکانیکی',
+    image: 'https://image.qwenlm.ai/generated-images/b0e67af1-d5a6-4d6a-ae4f-d0d114ec44aa/_result.png',
+    stock: 10,
+    featured: true
   }
 ];
 
