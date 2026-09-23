@@ -148,19 +148,19 @@ const AdminPanel: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
       {/* Toast */}
       {toast && (
-        <div className={`fixed top-4 left-4 z-50 px-5 py-3 rounded-xl shadow-xl text-white font-medium animate-slide-in-left flex items-center gap-2 ${
+        <div className={`fixed top-4 left-4 z-50 px-4 py-2 sm:px-5 sm:py-3 rounded-xl shadow-xl text-white font-medium animate-slide-in-left flex items-center gap-2 ${
           toast.type === 'success' ? 'bg-emerald-500' : toast.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
         }`}>
-          <CheckCircle2 size={18} />
-          <span className="text-sm">{toast.message}</span>
+          <CheckCircle2 size={16} className="sm:w-[18px] sm:h-[18px]" />
+          <span className="text-xs sm:text-sm">{toast.message}</span>
         </div>
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 right-0 z-40 w-72 bg-gradient-to-b from-slate-900 to-slate-950 text-white transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed inset-y-0 right-0 z-40 w-64 sm:w-72 bg-gradient-to-b from-slate-900 to-slate-950 text-white transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
         <div className="p-6 h-full flex flex-col">
           <div className="flex items-center gap-3 mb-10">
             <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
@@ -200,39 +200,39 @@ const AdminPanel: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 min-h-screen">
+      <main className="flex-1 min-h-screen w-full lg:w-auto">
         {/* Top Bar */}
-        <div className="bg-white border-b border-slate-200 px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-4">
+        <div className="bg-white border-b border-slate-200 px-3 sm:px-4 md:px-6 py-3 sm:py-4 flex items-center justify-between sticky top-0 z-30">
+          <div className="flex items-center gap-2 sm:gap-4">
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-slate-600 hover:text-slate-800 transition-colors">
-              <Menu size={24} />
+              <Menu size={20} className="sm:w-6 sm:h-6" />
             </button>
-            <h1 className="text-lg font-black text-slate-900">
+            <h1 className="text-base sm:text-lg font-black text-slate-900">
               {tabs.find(t => t.id === activeTab)?.label}
             </h1>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-slate-500 hidden sm:block">خوش آمدید، ادمین</span>
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-blue-500/30">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-xs sm:text-sm text-slate-500 hidden sm:block">خوش آمدید، ادمین</span>
+            <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white text-xs sm:text-sm font-bold shadow-lg shadow-blue-500/30">
               A
             </div>
           </div>
         </div>
 
-        <div className="p-4 md:p-6">
+        <div className="p-3 sm:p-4 md:p-6">
           {/* Dashboard */}
           {activeTab === 'dashboard' && (
-            <div className="animate-fade-in space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="animate-fade-in space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
                 {stats.map((stat, i) => (
-                  <div key={i} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 hover:shadow-md transition-all">
+                  <div key={i} className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-100 p-3 sm:p-5 hover:shadow-md transition-all">
                     <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-slate-500 font-medium">{stat.label}</p>
-                        <p className="text-2xl font-black text-slate-900 mt-1">{stat.value}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs text-slate-500 font-medium truncate">{stat.label}</p>
+                        <p className="text-base sm:text-2xl font-black text-slate-900 mt-0.5 sm:mt-1 truncate">{stat.value}</p>
                       </div>
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-lg`}>
-                        {stat.icon}
+                      <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
+                        {React.cloneElement(stat.icon, { size: window.innerWidth < 640 ? 16 : 24 } as any)}
                       </div>
                     </div>
                   </div>
