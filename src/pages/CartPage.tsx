@@ -90,6 +90,7 @@ const CartPage: React.FC = () => {
                 <ImageWithFallback
                   src={item.product.image}
                   alt={item.product.name}
+                  category={item.product.category}
                   className="w-full h-full object-cover"
                 />
               </div>

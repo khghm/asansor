@@ -68,6 +68,7 @@ const ProductDetailPage: React.FC = () => {
             <ImageWithFallback
               src={product.image}
               alt={product.name}
+              category={product.category}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
             {product.stock < 10 && (
@@ -206,6 +207,7 @@ const ProductDetailPage: React.FC = () => {
                   <ImageWithFallback
                     src={relProduct.image}
                     alt={relProduct.name}
+                    category={relProduct.category}
                     className="w-full h-full object-cover img-zoom"
                   />
                 </div>

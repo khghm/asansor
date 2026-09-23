@@ -108,6 +108,7 @@ const ProductsPage: React.FC = () => {
                   <ImageWithFallback
                     src={product.image}
                     alt={product.name}
+                    category={product.category}
                     className="w-full h-full object-cover img-zoom"
                   />
                   <div className="absolute top-3 right-3">
