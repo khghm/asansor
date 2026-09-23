@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
-import { Search, Filter, ShoppingCart } from 'lucide-react';
+import { Search, Filter, ShoppingCart, Check } from 'lucide-react';
 import { categories } from '../data/store';
 
 const ProductsPage: React.FC = () => {
@@ -8,9 +8,19 @@ const ProductsPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortBy, setSortBy] = useState('default');
+  const [addedToCart, setAddedToCart] = useState<string | null>(null);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fa-IR').format(price) + ' تومان';
+  };
+
+  const handleAddToCart = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      addToCart(product);
+      setAddedToCart(productId);
+      setTimeout(() => setAddedToCart(null), 2000);
+    }
   };
 
   let filtered = products.filter(p => {
@@ -19,9 +29,9 @@ const ProductsPage: React.FC = () => {
     return matchSearch && matchCategory;
   });
 
-  if (sortBy === 'price-asc') filtered.sort((a, b) => a.price - b.price);
-  else if (sortBy === 'price-desc') filtered.sort((a, b) => b.price - a.price);
-  else if (sortBy === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name, 'fa'));
+  if (sortBy === 'price-asc') filtered = [...filtered].sort((a, b) => a.price - b.price);
+  else if (sortBy === 'price-desc') filtered = [...filtered].sort((a, b) => b.price - a.price);
+  else if (sortBy === 'name') filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name, 'fa'));
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -37,7 +47,7 @@ const ProductsPage: React.FC = () => {
               placeholder="جستجوی محصول..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="input-field pr-10"
+              className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
             />
           </div>
           <div className="relative">
@@ -45,7 +55,7 @@ const ProductsPage: React.FC = () => {
             <select
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
-              className="input-field pr-10 appearance-none"
+              className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none"
             >
               <option value="">همه دسته‌بندی‌ها</option>
               {categories.map(cat => (
@@ -56,7 +66,7 @@ const ProductsPage: React.FC = () => {
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
-            className="input-field appearance-none"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all appearance-none"
           >
             <option value="default">مرتب‌سازی پیش‌فرض</option>
             <option value="price-asc">ارزان‌ترین</option>
@@ -77,7 +87,7 @@ const ProductsPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filtered.map(product => (
-            <div key={product.id} className="card group">
+            <div key={product.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="h-40 bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center text-5xl group-hover:scale-110 transition-transform duration-300">
                 {product.image}
               </div>
@@ -88,11 +98,15 @@ const ProductsPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-blue-600 text-sm">{formatPrice(product.price)}</span>
                   <button
-                    onClick={() => addToCart(product)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors"
+                    onClick={() => handleAddToCart(product.id)}
+                    className={`p-2 rounded-lg transition-all duration-200 ${
+                      addedToCart === product.id
+                        ? 'bg-green-500 text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
                     title="افزودن به سبد خرید"
                   >
-                    <ShoppingCart size={16} />
+                    {addedToCart === product.id ? <Check size={16} /> : <ShoppingCart size={16} />}
                   </button>
                 </div>
                 {product.stock < 10 && (

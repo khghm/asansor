@@ -1,25 +1,42 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
-import { CheckCircle, Wrench, Settings, RefreshCw } from 'lucide-react';
+import { CheckCircle, Wrench, Settings, RefreshCw, Send } from 'lucide-react';
 
 const ServicesPage: React.FC = () => {
   const { addServiceRequest } = useStore();
   const [form, setForm] = useState({
-    name: '', phone: '', address: '', serviceType: 'repair' as 'installation' | 'repair' | 'maintenance', description: ''
+    name: '',
+    phone: '',
+    address: '',
+    serviceType: 'repair' as 'installation' | 'repair' | 'maintenance',
+    description: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     addServiceRequest({
       id: 'SRV-' + Date.now(),
       ...form,
       status: 'new',
       date: new Date().toLocaleDateString('fa-IR')
     });
+    
     setSubmitted(true);
+    setIsSubmitting(false);
     setForm({ name: '', phone: '', address: '', serviceType: 'repair', description: '' });
-    setTimeout(() => setSubmitted(false), 4000);
+    
+    setTimeout(() => setSubmitted(false), 5000);
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -72,8 +89,8 @@ const ServicesPage: React.FC = () => {
         <h2 className="text-xl font-bold text-gray-800 mb-6">درخواست خدمات</h2>
         
         {submitted && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-2">
-            <CheckCircle className="text-green-500" />
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-2 animate-fade-in">
+            <CheckCircle className="text-green-500 flex-shrink-0" size={20} />
             <span className="text-green-700">درخواست شما با موفقیت ثبت شد. به زودی با شما تماس خواهیم گرفت.</span>
           </div>
         )}
@@ -81,45 +98,49 @@ const ServicesPage: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">نام و نام خانوادگی</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">نام و نام خانوادگی *</label>
               <input
                 type="text"
                 required
                 value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
-                className="input-field"
+                onChange={e => handleChange('name', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 placeholder="نام کامل"
+                disabled={isSubmitting}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">شماره تماس</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">شماره تماس *</label>
               <input
                 type="tel"
                 required
                 value={form.phone}
-                onChange={e => setForm({ ...form, phone: e.target.value })}
-                className="input-field"
+                onChange={e => handleChange('phone', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                 placeholder="۰۹۱۲۱۲۳۴۵۶۷"
+                disabled={isSubmitting}
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">آدرس</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">آدرس *</label>
             <input
               type="text"
               required
               value={form.address}
-              onChange={e => setForm({ ...form, address: e.target.value })}
-              className="input-field"
+              onChange={e => handleChange('address', e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               placeholder="آدرس محل نصب/تعمیر"
+              disabled={isSubmitting}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">نوع خدمات</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">نوع خدمات *</label>
             <select
               value={form.serviceType}
-              onChange={e => setForm({ ...form, serviceType: e.target.value as any })}
-              className="input-field"
+              onChange={e => handleChange('serviceType', e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              disabled={isSubmitting}
             >
               <option value="installation">نصب آسانسور</option>
               <option value="repair">تعمیر</option>
@@ -127,18 +148,33 @@ const ServicesPage: React.FC = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">توضیحات *</label>
             <textarea
               required
               rows={4}
               value={form.description}
-              onChange={e => setForm({ ...form, description: e.target.value })}
-              className="input-field"
+              onChange={e => handleChange('description', e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
               placeholder="توضیحات بیشتر درباره مشکل یا درخواست..."
+              disabled={isSubmitting}
             />
           </div>
-          <button type="submit" className="btn-primary w-full">
-            ثبت درخواست
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+          >
+            {isSubmitting ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>در حال ارسال...</span>
+              </>
+            ) : (
+              <>
+                <Send size={18} />
+                <span>ثبت درخواست</span>
+              </>
+            )}
           </button>
         </form>
       </div>

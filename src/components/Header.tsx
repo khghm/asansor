@@ -99,9 +99,10 @@ const Header: React.FC = () => {
                 <Link
                   to="/admin/login"
                   onClick={() => setMobileMenu(false)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 flex items-center gap-2"
                 >
-                  ورود ادمین
+                  <Shield size={16} />
+                  <span>ورود ادمین</span>
                 </Link>
               )}
               {isAdmin && (

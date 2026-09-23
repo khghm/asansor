@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../context/StoreContext';
+import { Product, Order, ServiceRequest } from '../../data/store';
+import ProductForm from './ProductForm';
+import ConfirmModal from './ConfirmModal';
 import {
   LayoutDashboard, Package, ShoppingCart, Wrench, LogOut,
-  TrendingUp, Users, DollarSign, AlertCircle, Plus, Edit, Trash2,
-  Eye, X, Check, Clock, ChevronDown
+  DollarSign, AlertCircle, Plus, Edit, Trash2, X, Menu,
+  TrendingUp, Users, CheckCircle, Clock, Eye
 } from 'lucide-react';
 
 type Tab = 'dashboard' | 'products' | 'orders' | 'services';
 
+interface DeleteConfirm {
+  type: 'product' | 'order' | 'service';
+  id: string;
+  name: string;
+}
+
 const AdminPanel: React.FC = () => {
+  const navigate = useNavigate();
   const {
     products, orders, serviceRequests,
     addProduct, updateProduct, deleteProduct,
@@ -19,11 +30,20 @@ const AdminPanel: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [showProductModal, setShowProductModal] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const formatPrice = (price: number) => new Intl.NumberFormat('fa-IR').format(price);
 
+  // Toast notification
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  // Tabs
   const tabs = [
     { id: 'dashboard' as Tab, label: 'داشبورد', icon: <LayoutDashboard size={20} /> },
     { id: 'products' as Tab, label: 'محصولات', icon: <Package size={20} /> },
@@ -31,6 +51,7 @@ const AdminPanel: React.FC = () => {
     { id: 'services' as Tab, label: 'درخواست خدمات', icon: <Wrench size={20} /> },
   ];
 
+  // Stats
   const stats = [
     { label: 'کل محصولات', value: products.length, icon: <Package size={24} />, color: 'bg-blue-500' },
     { label: 'سفارشات جدید', value: orders.filter(o => o.status === 'pending').length, icon: <ShoppingCart size={24} />, color: 'bg-orange-500' },
@@ -38,6 +59,7 @@ const AdminPanel: React.FC = () => {
     { label: 'درآمد کل', value: formatPrice(orders.reduce((sum, o) => sum + o.total, 0)) + ' ت', icon: <DollarSign size={24} />, color: 'bg-purple-500' },
   ];
 
+  // Status labels & colors
   const statusLabels: Record<string, string> = {
     pending: 'در انتظار',
     processing: 'در حال پردازش',
@@ -60,92 +82,90 @@ const AdminPanel: React.FC = () => {
     completed: 'bg-green-100 text-green-700'
   };
 
+  // Handlers
   const handleLogout = () => {
     setAdmin(false);
-    window.location.href = '/';
+    navigate('/');
   };
 
-  // Product Form
-  const ProductForm: React.FC = () => {
-    const [form, setForm] = useState(editingProduct || {
-      id: '', name: '', description: '', price: 0, category: '', image: '📦', stock: 0, featured: false
-    });
+  const handleAddProduct = () => {
+    setEditingProduct(null);
+    setShowProductModal(true);
+  };
 
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      if (editingProduct) {
-        updateProduct({ ...form, price: Number(form.price), stock: Number(form.stock) });
-      } else {
-        addProduct({ ...form, id: String(Date.now()), price: Number(form.price), stock: Number(form.stock) });
-      }
-      setShowProductModal(false);
-      setEditingProduct(null);
-    };
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setShowProductModal(true);
+  };
 
-    return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between p-6 border-b">
-            <h3 className="text-lg font-bold">{editingProduct ? 'ویرایش محصول' : 'افزودن محصول جدید'}</h3>
-            <button onClick={() => { setShowProductModal(false); setEditingProduct(null); }} className="text-gray-400 hover:text-gray-600">
-              <X size={24} />
-            </button>
-          </div>
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">نام محصول</label>
-              <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="input-field" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
-              <textarea required rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className="input-field" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">قیمت (تومان)</label>
-                <input type="number" required value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} className="input-field" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">موجودی</label>
-                <input type="number" required value={form.stock} onChange={e => setForm({ ...form, stock: e.target.value })} className="input-field" />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">دسته‌بندی</label>
-              <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="input-field">
-                <option value="">انتخاب دسته‌بندی</option>
-                {['موتور آسانسور', 'تابلو فرمان', 'ریلس و ریل‌براکت', 'سیم بکسل', 'درب آسانسور', 'کابین و دکوراسیون', 'قطعات الکتریکی', 'قطعات مکانیکی', 'سیستم ایمنی', 'لوازم جانبی'].map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">آیکون (ایموجی)</label>
-              <input type="text" value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} className="input-field" placeholder="📦" />
-            </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" checked={form.featured} onChange={e => setForm({ ...form, featured: e.target.checked })} className="w-4 h-4" id="featured" />
-              <label htmlFor="featured" className="text-sm text-gray-700">محصول ویژه</label>
-            </div>
-            <div className="flex gap-3 pt-4">
-              <button type="submit" className="btn-primary flex-1">
-                {editingProduct ? 'بروزرسانی' : 'افزودن'}
-              </button>
-              <button type="button" onClick={() => { setShowProductModal(false); setEditingProduct(null); }} className="btn-secondary flex-1">
-                انصراف
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
+  const handleSaveProduct = (product: Product) => {
+    if (editingProduct) {
+      updateProduct(product);
+      showToast('محصول با موفقیت بروزرسانی شد');
+    } else {
+      addProduct(product);
+      showToast('محصول جدید با موفقیت اضافه شد');
+    }
+  };
+
+  const handleCloseProductModal = () => {
+    setShowProductModal(false);
+    setEditingProduct(null);
+  };
+
+  const handleDeleteClick = (type: 'product' | 'order' | 'service', id: string, name: string) => {
+    setDeleteConfirm({ type, id, name });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteConfirm) return;
+
+    switch (deleteConfirm.type) {
+      case 'product':
+        deleteProduct(deleteConfirm.id);
+        showToast('محصول با موفقیت حذف شد');
+        break;
+      case 'order':
+        deleteOrder(deleteConfirm.id);
+        showToast('سفارش با موفقیت حذف شد');
+        break;
+      case 'service':
+        deleteServiceRequest(deleteConfirm.id);
+        showToast('درخواست خدمات با موفقیت حذف شد');
+        break;
+    }
+    setDeleteConfirm(null);
+  };
+
+  const handleOrderStatusChange = (orderId: string, newStatus: Order['status']) => {
+    updateOrderStatus(orderId, newStatus);
+    showToast('وضعیت سفارش بروزرسانی شد');
+  };
+
+  const handleServiceStatusChange = (serviceId: string, newStatus: ServiceRequest['status']) => {
+    updateServiceStatus(serviceId, newStatus);
+    showToast('وضعیت درخواست خدمات بروزرسانی شد');
+  };
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    setSidebarOpen(false);
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed top-4 left-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white font-medium animate-slide-in ${
+          toast.type === 'success' ? 'bg-green-500' : toast.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        }`}>
+          {toast.message}
+        </div>
+      )}
+
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 right-0 z-40 w-64 bg-gray-900 text-white transform transition-transform lg:translate-x-0 lg:static lg:inset-auto ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
-        <div className="p-6">
+      <aside className={`fixed inset-y-0 right-0 z-40 w-64 bg-gray-900 text-white transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
+        <div className="p-6 h-full flex flex-col">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold">آ</span>
@@ -156,11 +176,11 @@ const AdminPanel: React.FC = () => {
             </div>
           </div>
 
-          <nav className="space-y-1">
+          <nav className="space-y-1 flex-1">
             {tabs.map(tab => (
               <button
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id); setSidebarOpen(false); }}
+                onClick={() => handleTabChange(tab.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   activeTab === tab.id ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                 }`}
@@ -173,10 +193,10 @@ const AdminPanel: React.FC = () => {
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-gray-800 mt-8 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-red-400 hover:bg-gray-800 transition-colors"
           >
             <LogOut size={20} />
-            <span>خروج</span>
+            <span>خروج از پنل</span>
           </button>
         </div>
       </aside>
@@ -186,8 +206,8 @@ const AdminPanel: React.FC = () => {
         {/* Top Bar */}
         <div className="bg-white shadow-sm px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-600">
-              <LayoutDashboard size={24} />
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-600 hover:text-gray-800 transition-colors">
+              <Menu size={24} />
             </button>
             <h1 className="text-lg font-bold text-gray-800">
               {tabs.find(t => t.id === activeTab)?.label}
@@ -204,10 +224,10 @@ const AdminPanel: React.FC = () => {
         <div className="p-4 md:p-6">
           {/* Dashboard */}
           {activeTab === 'dashboard' && (
-            <div className="animate-fade-in">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="animate-fade-in space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat, i) => (
-                  <div key={i} className="bg-white rounded-xl shadow-sm p-5">
+                  <div key={i} className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm text-gray-500">{stat.label}</p>
@@ -221,7 +241,6 @@ const AdminPanel: React.FC = () => {
                 ))}
               </div>
 
-              {/* Recent Orders */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white rounded-xl shadow-sm p-5">
                   <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -230,7 +249,7 @@ const AdminPanel: React.FC = () => {
                   </h3>
                   <div className="space-y-3">
                     {orders.slice(0, 5).map(order => (
-                      <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={order.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                         <div>
                           <p className="text-sm font-medium text-gray-800">{order.customerName}</p>
                           <p className="text-xs text-gray-500">{order.id} - {order.date}</p>
@@ -240,6 +259,9 @@ const AdminPanel: React.FC = () => {
                         </span>
                       </div>
                     ))}
+                    {orders.length === 0 && (
+                      <p className="text-sm text-gray-500 text-center py-4">سفارشی ثبت نشده است</p>
+                    )}
                   </div>
                 </div>
 
@@ -250,7 +272,7 @@ const AdminPanel: React.FC = () => {
                   </h3>
                   <div className="space-y-3">
                     {serviceRequests.slice(0, 5).map(req => (
-                      <div key={req.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div key={req.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                         <div>
                           <p className="text-sm font-medium text-gray-800">{req.name}</p>
                           <p className="text-xs text-gray-500">{req.id} - {req.date}</p>
@@ -260,13 +282,15 @@ const AdminPanel: React.FC = () => {
                         </span>
                       </div>
                     ))}
+                    {serviceRequests.length === 0 && (
+                      <p className="text-sm text-gray-500 text-center py-4">درخواستی ثبت نشده است</p>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Low Stock Alert */}
               {products.filter(p => p.stock < 10).length > 0 && (
-                <div className="bg-white rounded-xl shadow-sm p-5 mt-6">
+                <div className="bg-white rounded-xl shadow-sm p-5">
                   <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
                     <AlertCircle size={18} className="text-orange-500" />
                     هشدار موجودی کم
@@ -293,8 +317,8 @@ const AdminPanel: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <p className="text-sm text-gray-500">{products.length} محصول</p>
                 <button
-                  onClick={() => { setEditingProduct(null); setShowProductModal(true); }}
-                  className="btn-primary flex items-center gap-2 text-sm"
+                  onClick={handleAddProduct}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 text-sm"
                 >
                   <Plus size={18} />
                   <span>افزودن محصول</span>
@@ -307,7 +331,7 @@ const AdminPanel: React.FC = () => {
                     <thead className="bg-gray-50 border-b">
                       <tr>
                         <th className="text-right px-4 py-3 text-xs font-medium text-gray-500">محصول</th>
-                        <th className="text-right px-4 py-3 text-xs font-medium text-gray-500">دسته‌بندی</th>
+                        <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 hidden md:table-cell">دسته‌بندی</th>
                         <th className="text-right px-4 py-3 text-xs font-medium text-gray-500">قیمت</th>
                         <th className="text-right px-4 py-3 text-xs font-medium text-gray-500">موجودی</th>
                         <th className="text-right px-4 py-3 text-xs font-medium text-gray-500">عملیات</th>
@@ -315,7 +339,7 @@ const AdminPanel: React.FC = () => {
                     </thead>
                     <tbody className="divide-y">
                       {products.map(product => (
-                        <tr key={product.id} className="hover:bg-gray-50">
+                        <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               <span className="text-2xl">{product.image}</span>
@@ -325,7 +349,7 @@ const AdminPanel: React.FC = () => {
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600">{product.category}</td>
+                          <td className="px-4 py-3 text-sm text-gray-600 hidden md:table-cell">{product.category}</td>
                           <td className="px-4 py-3 text-sm text-gray-800 font-medium">{formatPrice(product.price)} ت</td>
                           <td className="px-4 py-3">
                             <span className={`text-sm ${product.stock < 10 ? 'text-orange-600 font-bold' : 'text-gray-600'}`}>
@@ -335,14 +359,16 @@ const AdminPanel: React.FC = () => {
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-1">
                               <button
-                                onClick={() => { setEditingProduct(product); setShowProductModal(true); }}
+                                onClick={() => handleEditProduct(product)}
                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                title="ویرایش"
                               >
                                 <Edit size={16} />
                               </button>
                               <button
-                                onClick={() => { if (confirm('آیا از حذف مطمئنید؟')) deleteProduct(product.id); }}
+                                onClick={() => handleDeleteClick('product', product.id, product.name)}
                                 className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="حذف"
                               >
                                 <Trash2 size={16} />
                               </button>
@@ -353,9 +379,13 @@ const AdminPanel: React.FC = () => {
                     </tbody>
                   </table>
                 </div>
+                {products.length === 0 && (
+                  <div className="text-center py-12">
+                    <Package size={48} className="mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-500">محصولی ثبت نشده است</p>
+                  </div>
+                )}
               </div>
-
-              {showProductModal && <ProductForm />}
             </div>
           )}
 
@@ -366,10 +396,10 @@ const AdminPanel: React.FC = () => {
 
               <div className="space-y-4">
                 {orders.map(order => (
-                  <div key={order.id} className="bg-white rounded-xl shadow-sm p-5">
+                  <div key={order.id} className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-bold text-gray-800">{order.id}</h3>
                           <span className={`text-xs px-2 py-1 rounded-full ${statusColors[order.status]}`}>
                             {statusLabels[order.status]}
@@ -395,8 +425,8 @@ const AdminPanel: React.FC = () => {
                       <div className="flex flex-wrap gap-2">
                         <select
                           value={order.status}
-                          onChange={e => updateOrderStatus(order.id, e.target.value as any)}
-                          className="text-sm border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                          onChange={e => handleOrderStatusChange(order.id, e.target.value as Order['status'])}
+                          className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                         >
                           <option value="pending">در انتظار</option>
                           <option value="processing">در حال پردازش</option>
@@ -405,15 +435,22 @@ const AdminPanel: React.FC = () => {
                           <option value="cancelled">لغو شده</option>
                         </select>
                         <button
-                          onClick={() => { if (confirm('آیا از حذف مطمئنید؟')) deleteOrder(order.id); }}
-                          className="text-sm text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors"
+                          onClick={() => handleDeleteClick('order', order.id, order.customerName)}
+                          className="text-sm text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors flex items-center gap-1"
                         >
-                          حذف
+                          <Trash2 size={14} />
+                          <span>حذف</span>
                         </button>
                       </div>
                     </div>
                   </div>
                 ))}
+                {orders.length === 0 && (
+                  <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+                    <ShoppingCart size={48} className="mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-500">سفارشی ثبت نشده است</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -425,10 +462,10 @@ const AdminPanel: React.FC = () => {
 
               <div className="space-y-4">
                 {serviceRequests.map(req => (
-                  <div key={req.id} className="bg-white rounded-xl shadow-sm p-5">
+                  <div key={req.id} className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <h3 className="font-bold text-gray-800">{req.id}</h3>
                           <span className={`text-xs px-2 py-1 rounded-full ${statusColors[req.status]}`}>
                             {statusLabels[req.status]}
@@ -450,28 +487,56 @@ const AdminPanel: React.FC = () => {
                       <div className="flex flex-wrap gap-2">
                         <select
                           value={req.status}
-                          onChange={e => updateServiceStatus(req.id, e.target.value as any)}
-                          className="text-sm border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                          onChange={e => handleServiceStatusChange(req.id, e.target.value as ServiceRequest['status'])}
+                          className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                         >
                           <option value="new">جدید</option>
                           <option value="in-progress">در حال انجام</option>
                           <option value="completed">تکمیل شده</option>
                         </select>
                         <button
-                          onClick={() => { if (confirm('آیا از حذف مطمئنید؟')) deleteServiceRequest(req.id); }}
-                          className="text-sm text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors"
+                          onClick={() => handleDeleteClick('service', req.id, req.name)}
+                          className="text-sm text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors flex items-center gap-1"
                         >
-                          حذف
+                          <Trash2 size={14} />
+                          <span>حذف</span>
                         </button>
                       </div>
                     </div>
                   </div>
                 ))}
+                {serviceRequests.length === 0 && (
+                  <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+                    <Wrench size={48} className="mx-auto text-gray-300 mb-4" />
+                    <p className="text-gray-500">درخواست خدماتی ثبت نشده است</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
         </div>
       </main>
+
+      {/* Product Modal */}
+      {showProductModal && (
+        <ProductForm
+          product={editingProduct}
+          onSave={handleSaveProduct}
+          onClose={handleCloseProductModal}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteConfirm !== null}
+        title="تأیید حذف"
+        message={`آیا از حذف "${deleteConfirm?.name}" مطمئن هستید؟ این عمل قابل بازگشت نیست.`}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteConfirm(null)}
+        confirmText="حذف"
+        cancelText="انصراف"
+        type="danger"
+      />
 
       {/* Mobile overlay */}
       {sidebarOpen && (

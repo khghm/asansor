@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../context/StoreContext';
 import { ArrowLeft, Wrench, Shield, Truck, Star, Phone, CheckCircle } from 'lucide-react';
@@ -6,9 +6,19 @@ import { ArrowLeft, Wrench, Shield, Truck, Star, Phone, CheckCircle } from 'luci
 const HomePage: React.FC = () => {
   const { products, addToCart } = useStore();
   const featuredProducts = products.filter(p => p.featured).slice(0, 6);
+  const [addedToCart, setAddedToCart] = useState<string | null>(null);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fa-IR').format(price) + ' تومان';
+  };
+
+  const handleAddToCart = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      addToCart(product);
+      setAddedToCart(productId);
+      setTimeout(() => setAddedToCart(null), 2000);
+    }
   };
 
   return (
@@ -28,11 +38,11 @@ const HomePage: React.FC = () => {
               ارائه‌دهنده انواع لوازم یدکی آسانسور با کیفیت تضمینی و خدمات نصب و تعمیر توسط متخصصین مجرب
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link to="/products" className="btn-primary bg-white text-blue-700 hover:bg-blue-50 flex items-center gap-2">
+              <Link to="/products" className="bg-white hover:bg-blue-50 text-blue-700 px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
                 <span>مشاهده محصولات</span>
                 <ArrowLeft size={18} />
               </Link>
-              <Link to="/services" className="btn-primary bg-transparent border-2 border-white hover:bg-white/10">
+              <Link to="/services" className="border-2 border-white hover:bg-white/10 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200">
                 خدمات نصب و تعمیر
               </Link>
             </div>
@@ -78,7 +88,7 @@ const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredProducts.map(product => (
-              <div key={product.id} className="card group">
+              <div key={product.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group">
                 <div className="h-48 bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-300">
                   {product.image}
                 </div>
@@ -89,10 +99,14 @@ const HomePage: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-blue-600">{formatPrice(product.price)}</span>
                     <button
-                      onClick={() => addToCart(product)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                      onClick={() => handleAddToCart(product.id)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        addedToCart === product.id
+                          ? 'bg-green-500 text-white'
+                          : 'bg-blue-600 hover:bg-blue-700 text-white'
+                      }`}
                     >
-                      افزودن به سبد
+                      {addedToCart === product.id ? '✓ اضافه شد' : 'افزودن به سبد'}
                     </button>
                   </div>
                 </div>
@@ -101,7 +115,7 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="text-center mt-8 sm:hidden">
-            <Link to="/products" className="btn-primary inline-flex items-center gap-2">
+            <Link to="/products" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg inline-flex items-center gap-2">
               <span>مشاهده همه محصولات</span>
               <ArrowLeft size={18} />
             </Link>
@@ -155,7 +169,7 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="text-center mt-10">
-            <Link to="/services" className="btn-primary inline-flex items-center gap-2">
+            <Link to="/services" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg inline-flex items-center gap-2">
               <span>درخواست خدمات</span>
               <ArrowLeft size={18} />
             </Link>
@@ -177,7 +191,7 @@ const HomePage: React.FC = () => {
               { name: 'خانم رضایی', role: 'صاحب‌خانه', text: 'تعمیر آسانسور ما خیلی سریع و با کیفیت انجام شد. قیمت‌ها هم منصفانه بود.' },
               { name: 'مهندس کریمی', role: 'پیمانکار ساختمان', text: 'همکاری ما با فروشگاه آرمند چند ساله است. همیشه محصولات اورجینال و قیمت مناسب ارائه می‌دهند.' },
             ].map((review, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 shadow-md">
+              <div key={i} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
                 <div className="flex items-center gap-1 mb-3">
                   {[...Array(5)].map((_, j) => (
                     <Star key={j} size={16} className="text-yellow-400 fill-yellow-400" />
