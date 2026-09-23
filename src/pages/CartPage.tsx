@@ -86,7 +86,7 @@ const CartPage: React.FC = () => {
           {cart.map(item => (
             <div key={item.product.id} className="p-5 flex items-center gap-4 hover:bg-slate-50/50 transition-colors">
               <div className="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
-                <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover" />
+                <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"%3E%3Cpath d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"%3E%3C/path%3E%3C/svg%3E'; }} />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-slate-800 text-sm md:text-base">{item.product.name}</h3>
