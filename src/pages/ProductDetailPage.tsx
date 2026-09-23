@@ -6,6 +6,7 @@ import {
   Shield, Truck, Award, Star, Minus, Plus, Heart,
   Share2, ChevronLeft
 } from 'lucide-react';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -64,11 +65,10 @@ const ProductDetailPage: React.FC = () => {
         {/* Product Image */}
         <div className="space-y-4">
           <div className="bg-gradient-to-br from-slate-100 to-slate-50 rounded-2xl overflow-hidden aspect-square relative group">
-            <img 
-              src={product.image} 
+            <ImageWithFallback
+              src={product.image}
               alt={product.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1"%3E%3Cpath d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"%3E%3C/path%3E%3C/svg%3E'; }}
             />
             {product.stock < 10 && (
               <div className="absolute top-4 left-4">
@@ -203,11 +203,10 @@ const ProductDetailPage: React.FC = () => {
                 className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-slate-100 card-hover"
               >
                 <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-50 overflow-hidden">
-                  <img 
-                    src={relProduct.image} 
+                  <ImageWithFallback
+                    src={relProduct.image}
                     alt={relProduct.name}
                     className="w-full h-full object-cover img-zoom"
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"%3E%3Cpath d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"%3E%3C/path%3E%3C/svg%3E'; }}
                   />
                 </div>
                 <div className="p-4">

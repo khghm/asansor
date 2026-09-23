@@ -9,6 +9,7 @@ import {
   DollarSign, AlertCircle, Plus, Edit, Trash2, Menu,
   Building2, TrendingUp, CheckCircle2, X
 } from 'lucide-react';
+import ImageWithFallback from '../../components/ImageWithFallback';
 
 type Tab = 'dashboard' | 'products' | 'orders' | 'services';
 
@@ -295,7 +296,11 @@ const AdminPanel: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {products.filter(p => p.stock < 10).map(p => (
                       <div key={p.id} className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl border border-orange-100">
-                        <img src={p.image} alt={p.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"%3E%3Cpath d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"%3E%3C/path%3E%3C/svg%3E'; }} />
+                        <ImageWithFallback
+                          src={p.image}
+                          alt={p.name}
+                          className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                        />
                         <div>
                           <p className="text-sm font-bold text-slate-800">{p.name}</p>
                           <p className="text-xs text-orange-600 font-medium">فقط {p.stock} عدد</p>
@@ -341,7 +346,11 @@ const AdminPanel: React.FC = () => {
                         <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-3">
-                              <img src={product.image} alt={product.name} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" onError={(e) => { (e.target as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"%3E%3Cpath d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"%3E%3C/path%3E%3C/svg%3E'; }} />
+                              <ImageWithFallback
+                                src={product.image}
+                                alt={product.name}
+                                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                              />
                               <div>
                                 <p className="text-sm font-bold text-slate-800">{product.name}</p>
                                 {product.featured && <span className="text-xs text-blue-600 font-medium">⭐ ویژه</span>}

@@ -51,7 +51,7 @@ export const initialProducts: Product[] = [
     description: 'موتور گیربکس‌دار با توان بالا مناسب ساختمان‌های مسکونی تا ۶ طبقه. این موتور با تکنولوژی پیشرفته اروپایی ساخته شده و دارای گارانتی ۲ ساله است. قدرت بالا، صدای کم و مصرف انرژی بهینه از ویژگی‌های بارز این محصول می‌باشد.',
     price: 45000000,
     category: 'موتور آسانسور',
-    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/3786143/pexels-photo-3786143.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 12,
     featured: true
   },
@@ -61,7 +61,7 @@ export const initialProducts: Product[] = [
     description: 'تابلو فرمان تمام دیجیتال با قابلیت تنظیمات پیشرفته و عیب‌یابی خودکار. این تابلو فرمان با میکروکنترلرهای پیشرفته طراحی شده و قابلیت اتصال به سیستم‌های هوشمند ساختمان را دارد.',
     price: 18000000,
     category: 'تابلو فرمان',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 25,
     featured: true
   },
@@ -71,7 +71,7 @@ export const initialProducts: Product[] = [
     description: 'ریلس استاندارد T89/A با طول ۳ متر، ساخت ایران با کیفیت بالا. این ریلس از فولاد مخصوص ساخته شده و دارای پوشش ضد زنگ می‌باشد. مناسب برای انواع آسانسورهای مسکونی و تجاری.',
     price: 2500000,
     category: 'ریلس و ریل‌براکت',
-    image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/162553/keys-workshop-machinery-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 50,
     featured: false
   },
@@ -81,7 +81,7 @@ export const initialProducts: Product[] = [
     description: 'سیم بکسل فولادی ۸ میلیمتر با روکش گالوانیزه، مناسب آسانسور. این سیم بکسل دارای مقاومت کششی بالا و عمر طولانی است. مطابق با استانداردهای بین‌المللی EN 81 تولید شده است.',
     price: 850000,
     category: 'سیم بکسل',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/159492/cable-wire-rope-steel-159492.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 100,
     featured: true
   },
@@ -91,7 +91,7 @@ export const initialProducts: Product[] = [
     description: 'درب اتوماتیک تلسکوپی با سنسور ایمنی و موتور قدرتمند. این درب دارای سیستم ضد برخورد و تشخیص مانع می‌باشد. نصب آسان و نگهداری کم از مزایای این محصول است.',
     price: 32000000,
     category: 'درب آسانسور',
-    image: 'https://images.unsplash.com/photo-1567449303078-57ad995bd329?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/1395967/pexels-photo-1395967.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 8,
     featured: true
   },
@@ -101,7 +101,7 @@ export const initialProducts: Product[] = [
     description: 'کابین آسانسور با روکش استیل طلایی و آینه قدی، لوکس و مدرن. این کابین با طراحی خاص و متریال درجه یک ساخته شده و جلوه‌ای باشکوه به ساختمان می‌بخشد.',
     price: 55000000,
     category: 'کابین و دکوراسیون',
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/271752/pexels-photo-271752.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 5,
     featured: true
   },
@@ -111,7 +111,7 @@ export const initialProducts: Product[] = [
     description: 'اینورتر VVVF با قابلیت تنظیم سرعت و کاهش مصرف انرژی. این اینورتر با تکنولوژی پیشرفته باعث کاهش ۴۰ درصدی مصرف برق و حرکت نرم و بی‌صدا می‌شود.',
     price: 22000000,
     category: 'قطعات الکتریکی',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 15,
     featured: false
   },
@@ -121,7 +121,7 @@ export const initialProducts: Product[] = [
     description: 'ترمز الکترومکانیکی با قدرت توقف بالا و عمر طولانی. این ترمز با سیستم ایمنی پیشرفته مجهز شده و در مواقع اضطراری به سرعت عمل می‌کند.',
     price: 8500000,
     category: 'قطعات مکانیکی',
-    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/1330219/pexels-photo-1330219.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 20,
     featured: false
   },
@@ -131,7 +131,7 @@ export const initialProducts: Product[] = [
     description: 'سیستم پاراشوت ایمنی برای جلوگیری از سقوط کابین. این سیستم حیاتی در مواقع قطع سیم بکسل یا خرابی ترمز اصلی، کابین را به صورت ایمن متوقف می‌کند.',
     price: 12000000,
     category: 'سیستم ایمنی',
-    image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/162553/keys-workshop-machinery-tools-162553.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 18,
     featured: true
   },
@@ -141,7 +141,7 @@ export const initialProducts: Product[] = [
     description: 'چشمی فتوالکتریک برای تشخیص مانع در مسیر درب. این سنسور با دقت بالا مانع از برخورد درب با افراد یا اشیاء می‌شود و ایمنی را تضمین می‌کند.',
     price: 1500000,
     category: 'لوازم جانبی',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/159492/cable-wire-rope-steel-159492.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 40,
     featured: false
   },
@@ -151,7 +151,7 @@ export const initialProducts: Product[] = [
     description: 'شستی لمسی احضار طبقات با نمایشگر LED و طراحی مدرن. این شستی با تکنولوژی خازنی ساخته شده و دارای نور پس‌زمینه LED می‌باشد.',
     price: 3500000,
     category: 'قطعات الکتریکی',
-    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 30,
     featured: false
   },
@@ -161,7 +161,7 @@ export const initialProducts: Product[] = [
     description: 'موتور گیرلس با راندمان بالا، صدای کم و مصرف انرژی پایین. این موتور نسل جدید آسانسورها بوده و با حذف گیربکس، راندمان را به ۹۵ درصد رسانده است.',
     price: 65000000,
     category: 'موتور آسانسور',
-    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=600&fit=crop',
+    image: 'https://images.pexels.com/photos/3786143/pexels-photo-3786143.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&dpr=1',
     stock: 6,
     featured: true
   }
