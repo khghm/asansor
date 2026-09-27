@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Product } from '../../data/store';
-import { X, Package } from 'lucide-react';
+import { X, Package, Upload, ImageIcon, Trash2 } from 'lucide-react';
+
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
 
 interface ProductFormProps {
   product?: Product | null;
@@ -25,6 +27,40 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
       setForm(product);
     }
   }, [product]);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageError, setImageError] = useState<string>('');
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    // اجازه می‌دهیم دوباره همان فایل انتخاب شود
+    e.target.value = '';
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setImageError('فقط فایل‌های تصویری مجاز هستند (jpg, png, webp, ...)');
+      return;
+    }
+    if (file.size > MAX_IMAGE_SIZE) {
+      setImageError('حجم تصویر باید کمتر از ۲ مگابایت باشد');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageError('');
+      setForm(prev => ({ ...prev, image: String(reader.result) }));
+    };
+    reader.onerror = () => {
+      setImageError('خواندن فایل ناموفق بود، لطفاً دوباره تلاش کنید');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearImage = () => {
+    setImageError('');
+    setForm(prev => ({ ...prev, image: '' }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,14 +172,62 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
           </div>
           
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">آدرس تصویر (URL)</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">تصویر محصول</label>
+
+            {form.image ? (
+              <div className="relative w-full h-44 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 mb-3">
+                <img
+                  src={form.image}
+                  alt="پیش‌نمایش تصویر محصول"
+                  className="w-full h-full object-contain"
+                />
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  title="حذف تصویر"
+                  className="absolute top-2 left-2 p-2 rounded-lg bg-white/90 text-red-600 shadow hover:bg-red-50 transition-all"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ) : (
+              <div className="w-full h-28 rounded-xl border border-dashed border-slate-300 bg-slate-50 flex flex-col items-center justify-center gap-1 text-slate-400 mb-3">
+                <ImageIcon size={24} />
+                <span className="text-xs font-medium">هنوز تصویری انتخاب نشده است</span>
+              </div>
+            )}
+
             <input
-              type="url"
-              value={form.image}
-              onChange={e => setForm({ ...form, image: e.target.value })}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              placeholder="https://example.com/image.jpg"
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
             />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+            >
+              <Upload size={18} />
+              {form.image ? 'انتخاب تصویر دیگر از روی هارد' : 'بارگذاری تصویر از روی هارد'}
+            </button>
+            {imageError && (
+              <p className="mt-2 text-xs font-medium text-red-600">{imageError}</p>
+            )}
+
+            <details className="mt-3">
+              <summary className="text-xs font-bold text-slate-500 cursor-pointer hover:text-slate-700 select-none">
+                یا وارد کردن آدرس تصویر (URL)
+              </summary>
+              <input
+                type="url"
+                value={form.image.startsWith('data:') ? '' : form.image}
+                onChange={e => setForm({ ...form, image: e.target.value })}
+                className="mt-2 w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
+                placeholder="https://example.com/image.jpg"
+              />
+            </details>
           </div>
           
           <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
