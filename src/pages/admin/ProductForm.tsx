@@ -19,7 +19,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
     category: '',
     image: '',
     stock: 0,
-    featured: false
+    featured: false,
+    lowStockThreshold: undefined
   });
 
   useEffect(() => {
@@ -68,7 +69,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
       ...form,
       id: form.id || String(Date.now()),
       price: Number(form.price),
-      stock: Number(form.stock)
+      stock: Number(form.stock),
+      lowStockThreshold: form.lowStockThreshold === undefined || isNaN(Number(form.lowStockThreshold))
+        ? undefined
+        : Number(form.lowStockThreshold)
     };
     onSave(productToSave);
     onClose();
@@ -154,6 +158,21 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
                 placeholder="0"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-slate-700 mb-2">آستانه هشدار موجودی کم (اختیاری)</label>
+            <input
+              type="number"
+              min="0"
+              value={form.lowStockThreshold ?? ''}
+              onChange={e => setForm({ ...form, lowStockThreshold: e.target.value === '' ? undefined : Number(e.target.value) })}
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
+              placeholder="خالی = استفاده از آستانه سراسری تنظیمات سایت"
+            />
+            <p className="text-xs text-slate-400 mt-1.5">
+              اگر این عدد پر شود، فقط برای همین محصول اعمال می‌شود؛ در غیر این صورت آستانه سراسری از «تنظیمات سایت» استفاده می‌گردد.
+            </p>
           </div>
           
           <div>

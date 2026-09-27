@@ -3,7 +3,7 @@ import { useStore } from '../../context/StoreContext';
 import { SiteSettings, defaultSiteSettings } from '../../data/store';
 import {
   Save, Upload, Trash2, ImageIcon, Settings as SettingsIcon,
-  Building2, Phone, Share2, RotateCcw, CheckCircle2
+  Building2, Phone, Share2, RotateCcw, CheckCircle2, AlertTriangle, ReceiptText
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 
@@ -68,6 +68,11 @@ const SettingsPage: React.FC = () => {
   const setField = (field: keyof SiteSettings) => (v: string) =>
     setForm(prev => ({ ...prev, [field]: v }));
 
+  const setNumberField = (field: 'lowStockThreshold') => (v: string) => {
+    const n = parseInt(v, 10);
+    setForm(prev => ({ ...prev, [field]: isNaN(n) || n < 0 ? 0 : n }));
+  };
+
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     // اجازه می‌دهیم دوباره همان فایل انتخاب شود
@@ -104,6 +109,7 @@ const SettingsPage: React.FC = () => {
     updateSettings({
       ...form,
       siteName: form.siteName.trim() || settings.siteName,
+      lowStockThreshold: Number(form.lowStockThreshold) > 0 ? Number(form.lowStockThreshold) : defaultSiteSettings.lowStockThreshold,
     });
     setSavedToast(true);
     setTimeout(() => setSavedToast(false), 3000);
@@ -206,6 +212,40 @@ const SettingsPage: React.FC = () => {
             <Field label="ساعات کاری" value={form.workingHours} onChange={setField('workingHours')} />
           </div>
           <Field label="آدرس" value={form.address} onChange={setField('address')} />
+        </SectionCard>
+
+        {/* تنظیمات انبار و هشدار موجودی */}
+        <SectionCard title="انبار و هشدار موجودی کم" icon={<AlertTriangle size={18} />}>
+          <div className="max-w-xs">
+            <label className="block text-sm font-bold text-slate-700 mb-1.5">آستانه سراسری هشدار موجودی کم (عدد)</label>
+            <input
+              type="number"
+              min="0"
+              value={String(form.lowStockThreshold ?? defaultSiteSettings.lowStockThreshold)}
+              onChange={e => setNumberField('lowStockThreshold')(e.target.value)}
+              className="w-full text-sm border border-slate-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+            />
+            <p className="text-xs text-slate-400 mt-1.5 leading-6">
+              هر محصولی که موجودی آن کمتر از این عدد باشد، در داشبورد و لیست محصولات «موجودی کم» تلقی شده و هشدار می‌خورد.
+              برای هر محصول می‌توان در فرم محصول، آستانه اختصاصی تعیین کرد (اولویت با آستانه اختصاصی محصول است).
+            </p>
+          </div>
+        </SectionCard>
+
+        {/* اطلاعات فاکتور */}
+        <SectionCard title="اطلاعات فاکتور و حساب‌های بانکی" icon={<ReceiptText size={18} />}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <Field label="پیشوند شماره فاکتور" value={form.invoicePrefix} onChange={setField('invoicePrefix')} dir="ltr" placeholder="INV" hint="مثلاً INV-1403-001" />
+            <Field label="شماره ثبت / شناسه ملی شرکت" value={form.taxNumber} onChange={setField('taxNumber')} dir="ltr" placeholder="10101234567" />
+            <Field label="کد اقتصادی" value={form.economicCode} onChange={setField('economicCode')} dir="ltr" placeholder="4112233445" />
+            <Field label="نام بانک" value={form.bankName} onChange={setField('bankName')} placeholder="بانک ملت" />
+            <Field label="شماره حساب" value={form.accountNumber} onChange={setField('accountNumber')} dir="ltr" placeholder="0123456789" />
+            <Field label="شماره کارت" value={form.cardNumber} onChange={setField('cardNumber')} dir="ltr" placeholder="6104-3378-XXXX-XXXX" />
+            <Field label="شماره شبا" value={form.shebaNumber} onChange={setField('shebaNumber')} dir="ltr" placeholder="IR000000000000000000000000" />
+          </div>
+          <p className="text-xs text-slate-400 leading-6">
+            این اطلاعات به صورت خودکار در سربرگ و بخش پرداخت تمام فاکتورهای صادرشده درج می‌شود.
+          </p>
         </SectionCard>
 
         {/* شبکه‌های اجتماعی و کپی‌رایت */}
