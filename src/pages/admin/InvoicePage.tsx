@@ -6,9 +6,19 @@ import {
 } from '../../data/store';
 import {
   Plus, Trash2, Printer, X, Save, Search, FileText, ShoppingCart,
-  Wrench, Package, AlertTriangle, Receipt, Pencil
+  Wrench, Package, AlertTriangle, Receipt, Pencil, Calculator
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
+
+// قفل اسکرول صفحه پشتِ مودال‌ها (رفتار استاندارد موبایل)
+export const useBodyScrollLock = (locked: boolean) => {
+  React.useEffect(() => {
+    if (!locked) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [locked]);
+};
 
 const toFa = (n: number | string) => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
 const faNum = (n: number) => toFa(new Intl.NumberFormat('en-US').format(n));
@@ -79,8 +89,8 @@ const PrintSheet: React.FC<PrintSheetProps> = ({ invoice, settings }) => {
   return (
     <div dir="rtl" className="print-sheet bg-white text-slate-900 p-6 sm:p-8 text-sm leading-relaxed">
       {/* سربرگ */}
-      <div className="flex items-start justify-between gap-4 border-b-2 border-slate-800 pb-4 mb-5">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b-2 border-slate-800 pb-4 mb-5 print:flex-row print:items-start">
+        <div className="flex items-center gap-3 min-w-0">
           <div className="w-14 h-14 rounded-lg border border-slate-300 overflow-hidden flex items-center justify-center bg-white flex-shrink-0">
             {settings.logo ? (
               <img src={settings.logo} alt={settings.siteName} className="max-w-full max-h-full object-contain" />
@@ -88,16 +98,16 @@ const PrintSheet: React.FC<PrintSheetProps> = ({ invoice, settings }) => {
               <Receipt size={26} className="text-slate-500" />
             )}
           </div>
-          <div>
+          <div className="min-w-0">
             <h1 className="text-lg font-black">{settings.siteName}</h1>
             <p className="text-xs text-slate-600">{settings.siteSubtitle}</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">
+            <p className="text-[11px] text-slate-500 mt-0.5 break-words">
               {[settings.landline && `تلفن: ${settings.landline}`, settings.email].filter(Boolean).join(' | ')}
             </p>
             <p className="text-[11px] text-slate-500">{settings.address}</p>
           </div>
         </div>
-        <div className="text-left shrink-0">
+        <div className="text-left sm:text-right shrink-0 self-start">
           <h2 className="text-base font-black mb-2">فاکتور فروش</h2>
           <table className="text-xs">
             <tbody>
@@ -120,8 +130,29 @@ const PrintSheet: React.FC<PrintSheetProps> = ({ invoice, settings }) => {
         {invoice.customerAddress && <p className="sm:col-span-2"><span className="text-slate-500">آدرس: </span>{invoice.customerAddress}</p>}
       </div>
 
-      {/* جدول اقلام */}
-      <table className="w-full border-collapse text-xs mb-5">
+      {/* جدول اقلام — در موبایل به کارت تبدیل می‌شود */}
+      <div className="print:hidden">
+        {invoice.items.map((item, i) => (
+          <div key={item.id} className="border border-slate-300 rounded-md p-2.5 mb-2 text-xs">
+            <div className="flex items-start justify-between gap-2 mb-1.5">
+              <p className="font-bold leading-5">{toFa(i + 1)}. {item.description}</p>
+              <span className="shrink-0 text-[10px] bg-slate-100 rounded-full px-2 py-0.5 font-bold">{item.type === 'product' ? 'کالا' : 'خدمت'}</span>
+            </div>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-slate-600">
+              <span>واحد: {item.unit}</span>
+              <span>تعداد: {toFa(item.quantity)}</span>
+              <span>بهای واحد: {faNum(item.unitPrice)}</span>
+              <span className="font-black text-slate-900 mr-auto">جمع: {faNum(calcInvoiceLineTotal(item))}</span>
+            </div>
+          </div>
+        ))}
+        {invoice.items.length === 0 && (
+          <div className="border border-slate-300 rounded-md px-2 py-4 text-center text-slate-400 text-xs mb-2">قلمی ثبت نشده است</div>
+        )}
+      </div>
+
+      {/* جدول اقلام (نسخه چاپی A4) */}
+      <table className="w-full border-collapse text-xs mb-5 hidden print:table">
         <thead>
           <tr className="bg-slate-100 print:bg-gray-100">
             <th className="border border-slate-300 px-2 py-2 text-center w-8">ردیف</th>
@@ -152,8 +183,8 @@ const PrintSheet: React.FC<PrintSheetProps> = ({ invoice, settings }) => {
       </table>
 
       {/* جمع‌ها */}
-      <div className="flex flex-col sm:flex-row justify-between gap-5 mb-5">
-        <div className="flex-1 space-y-2">
+      <div className="flex flex-col sm:flex-row justify-between gap-5 mb-5 print:flex-row">
+        <div className="flex-1 space-y-2 order-2 sm:order-1 print:order-1">
           {invoice.notes && (
             <div className="border border-slate-200 rounded-md p-3 text-xs">
               <p className="font-bold mb-1">یادداشت‌ها:</p>
@@ -194,12 +225,12 @@ const PrintSheet: React.FC<PrintSheetProps> = ({ invoice, settings }) => {
         <span className="font-bold">{numberToPersianWords(totals.grandTotal)} ریال</span>
       </div>
 
-      {/* امضاها */}
-      <div className="grid grid-cols-3 gap-6 text-[11px] mt-10">
+      {/* امضاها — سه ستون در چاپ و دسکتاپ، تک‌ستونه فقط در موبایل */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 text-[11px] mt-10 print:grid-cols-3">
         {['امضای فروشنده', 'مهر و امضای تحویل‌گیرنده', 'مدیر مالی'].map(t => (
           <div key={t} className="text-center">
-            <p className="text-slate-600 mb-10">{t}</p>
-            <div className="border-t border-slate-400 pt-1 text-slate-400">نام و امضا</div>
+            <p className="text-slate-600 mb-8 sm:mb-10">{t}</p>
+            <div className="border-t border-slate-400 pt-1 text-slate-400 max-w-[200px] mx-auto">نام و امضا</div>
           </div>
         ))}
       </div>
@@ -240,6 +271,8 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
   const [taxEnabled, setTaxEnabled] = useState(initial?.taxEnabled ?? true);
   const [notes, setNotes] = useState(initial?.notes ?? '');
   const [error, setError] = useState('');
+
+  useBodyScrollLock(true);
 
   const totals = useMemo(() => calcInvoiceTotals(items, discountPercent, taxEnabled), [items, discountPercent, taxEnabled]);
 
@@ -300,8 +333,9 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
   const inputCls = 'w-full text-sm border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all bg-white';
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[94vh] overflow-y-auto animate-scale-in">
+    // موبایل: فرم تمام‌صفحه و اسکرول‌پذیر از بالا (بدون وسط‌چین کردن عمودی که باعث برش محتوا می‌شد)
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm overflow-y-auto flex flex-col sm:block sm:items-center sm:justify-center sm:p-4 print:hidden">
+      <div className="bg-white w-full sm:max-w-4xl min-h-full sm:min-h-0 sm:max-h-[94vh] sm:rounded-2xl shadow-2xl flex flex-col">
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-200 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
@@ -319,7 +353,7 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
           </button>
         </div>
 
-        <div className="p-4 sm:p-6 space-y-6">
+        <div className="p-4 sm:p-6 space-y-6 flex-1">
           {/* مشخصات */}
           <div>
             <h4 className="font-black text-slate-800 mb-3 text-sm">مشخصات فاکتور</h4>
@@ -334,7 +368,7 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-600 mb-1">تلفن</label>
-                <input value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} dir="ltr" className={inputCls} placeholder="09xxxxxxxxx" />
+                <input value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} dir="ltr" inputMode="tel" className={inputCls} placeholder="09xxxxxxxxx" />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-600 mb-1">تاریخ صدور</label>
@@ -349,20 +383,20 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
 
           {/* اقلام */}
           <div>
-            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
               <h4 className="font-black text-slate-800 text-sm">اقلام فاکتور</h4>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <select
                   value=""
-                  onChange={e => { addProductItem(e.target.value); e.target.value = ''; }}
-                  className="text-xs border border-slate-200 rounded-xl px-3 py-2 bg-white outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={e => { addProductItem(e.target.value); e.currentTarget.value = ''; }}
+                  className="text-xs border border-slate-200 rounded-xl px-3 py-2 bg-white outline-none focus:ring-2 focus:ring-blue-500 max-w-full"
                 >
                   <option value="">+ افزودن محصول از انبار…</option>
                   {products.map(p => (
                     <option key={p.id} value={p.id}>{p.name} — {new Intl.NumberFormat('fa-IR').format(p.price)} ت (موجودی: {toFa(p.stock)})</option>
                   ))}
                 </select>
-                <button onClick={addItem} className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-xl transition-colors">
+                <button onClick={addItem} className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-xl transition-colors shrink-0">
                   <Plus size={14} /> قلم دستی
                 </button>
               </div>
@@ -370,19 +404,20 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
 
             <div className="space-y-3">
               {items.map((it, idx) => (
-                <div key={it.id} className="grid grid-cols-12 gap-2 items-end bg-slate-50 border border-slate-100 rounded-xl p-3">
-                  <div className="col-span-12 lg:col-span-4">
+                // موبایل: کارت تک‌ستونه با چیدمان ۲ ستونه؛ دسکتاپ: گرید ۱۲ ستونه
+                <div key={it.id} className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-12 gap-2 items-end bg-slate-50 border border-slate-100 rounded-xl p-3">
+                  <div className="col-span-2 sm:col-span-4 lg:col-span-4">
                     <label className="block text-[10px] font-bold text-slate-500 mb-1">شرح کالا / خدمت</label>
                     <input value={it.description} onChange={e => updateItem(it.id, { description: e.target.value })} className={inputCls} placeholder={`قلم ${idx + 1}`} />
                   </div>
-                  <div className="col-span-4 lg:col-span-2">
+                  <div className="lg:col-span-2">
                     <label className="block text-[10px] font-bold text-slate-500 mb-1">نوع</label>
                     <select value={it.type} onChange={e => updateItem(it.id, { type: e.target.value as InvoiceItem['type'] })} className={inputCls}>
                       <option value="product">کالا</option>
                       <option value="service">خدمت</option>
                     </select>
                   </div>
-                  <div className="col-span-4 lg:col-span-2">
+                  <div className="lg:col-span-2">
                     <label className="block text-[10px] font-bold text-slate-500 mb-1">واحد</label>
                     <select value={it.unit} onChange={e => updateItem(it.id, { unit: e.target.value })} className={inputCls}>
                       {['عدد', 'متر', 'کیلومتر', 'شاخه', 'بسته', 'ساعت', 'جلسه', 'دستگاه/مورد', 'پروژه'].map(u => (
@@ -390,20 +425,20 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
                       ))}
                     </select>
                   </div>
-                  <div className="col-span-2 lg:col-span-1">
+                  <div>
                     <label className="block text-[10px] font-bold text-slate-500 mb-1">تعداد</label>
-                    <input type="number" min="1" value={it.quantity} onChange={e => updateItem(it.id, { quantity: Math.max(1, Number(e.target.value)) })} className={inputCls} dir="ltr" />
+                    <input type="number" min="1" inputMode="numeric" value={it.quantity} onChange={e => updateItem(it.id, { quantity: Math.max(1, Number(e.target.value)) })} className={inputCls} dir="ltr" />
                   </div>
-                  <div className="col-span-2 lg:col-span-1">
+                  <div>
                     <label className="block text-[10px] font-bold text-slate-500 mb-1">بهای واحد</label>
-                    <input type="number" min="0" value={it.unitPrice} onChange={e => updateItem(it.id, { unitPrice: Math.max(0, Number(e.target.value)) })} className={inputCls} dir="ltr" />
+                    <input type="number" min="0" inputMode="numeric" value={it.unitPrice} onChange={e => updateItem(it.id, { unitPrice: Math.max(0, Number(e.target.value)) })} className={inputCls} dir="ltr" />
                   </div>
-                  <div className="col-span-10 lg:col-span-1 text-xs font-bold text-slate-700 pb-2">
-                    {faNum(calcInvoiceLineTotal(it))}
+                  <div className="col-span-2 lg:col-span-1 text-xs font-bold text-slate-700 pb-2">
+                    جمع: {faNum(calcInvoiceLineTotal(it))}
                   </div>
-                  <div className="col-span-2 lg:col-span-1 pb-1">
+                  <div className="pb-1 justify-self-end lg:col-span-1">
                     <button onClick={() => removeItem(it.id)} disabled={items.length === 1} title="حذف قلم"
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30">
+                      className="p-2.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30">
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -449,18 +484,18 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
 
           {error && <p className="text-sm font-bold text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-2.5">{error}</p>}
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-1">
+          <div className="flex flex-col sm:flex-row gap-3 pt-1 pb-[env(safe-area-inset-bottom)]">
             <button onClick={() => handleSave(false)}
-              className="flex-1 bg-slate-800 hover:bg-slate-900 text-white px-5 py-3 rounded-xl font-bold transition-all text-sm">
+              className="flex-1 bg-slate-800 hover:bg-slate-900 text-white px-5 py-3.5 sm:py-3 rounded-xl font-bold transition-all text-sm min-h-[48px]">
               پیش‌نمایش و ذخیره (بدون کسر موجودی)
             </button>
             {!editingId && (
               <button onClick={() => handleSave(true)}
-                className="flex-1 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 text-sm">
+                className="flex-1 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-5 py-3.5 sm:py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 text-sm min-h-[48px]">
                 <Save size={16} /> قطعی کردن و کسر از موجودی انبار
               </button>
             )}
-            <button onClick={onCancel} className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-medium transition-all text-sm">
+            <button onClick={onCancel} className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3.5 sm:py-3 rounded-xl font-medium transition-all text-sm min-h-[48px]">
               انصراف
             </button>
           </div>
@@ -478,6 +513,8 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
   const [editingId, setEditingId] = useState<string | undefined>();
   const [printTarget, setPrintTarget] = useState<Invoice | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Invoice | null>(null);
+
+  useBodyScrollLock(printTarget !== null);
 
   const filtered = useMemo(() => {
     const q = search.trim();
@@ -514,14 +551,26 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
     }
   };
 
+  const emptyState = (
+    <div className="text-center py-12">
+      <FileText size={44} className="mx-auto text-slate-300 mb-3" />
+      <p className="text-slate-500 text-sm">{invoices.length === 0 ? 'هنوز فاکتوری صادر نشده است' : 'نتیجه‌ای برای جستجو یافت نشد'}</p>
+    </div>
+  );
+
   return (
     <div className="animate-fade-in space-y-5">
       {/* نوار ابزار */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <p className="text-sm text-slate-500 font-medium">
+        <p className="text-sm text-slate-500 font-medium shrink-0">
           <span className="text-slate-900 font-bold">{toFa(invoices.length)}</span> فاکتور صادر شده
         </p>
-        <div className="flex flex-wrap items-center gap-2">
+        {/* در موبایل دکمه «فاکتور جدید» ابتدا و به عرض کامل نمایش داده می‌شود تا همیشه در دسترس باشد */}
+        <div className="flex flex-col-reverse sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <button onClick={startNew}
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-500/30 min-h-[44px] shrink-0">
+            <Plus size={16} /> فاکتور جدید
+          </button>
           <div className="relative">
             <Search size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
@@ -531,10 +580,6 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
               className="text-sm border border-slate-200 rounded-xl pr-9 pl-3 py-2.5 bg-white outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64"
             />
           </div>
-          <button onClick={startNew}
-            className="inline-flex items-center gap-2 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-500/30">
-            <Plus size={16} /> فاکتور جدید
-          </button>
         </div>
       </div>
 
@@ -583,16 +628,16 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
         </div>
       </div>
 
-      {/* لیست فاکتورها */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      {/* لیست فاکتورها — جدول در دسکتاپ، کارت در موبایل */}
+      <div className="hidden sm:block bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[560px]">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
                 <th className="text-right px-4 py-3 text-xs font-bold text-slate-500">شماره</th>
                 <th className="text-right px-4 py-3 text-xs font-bold text-slate-500">نوع</th>
                 <th className="text-right px-4 py-3 text-xs font-bold text-slate-500 hidden md:table-cell">مشتری</th>
-                <th className="text-right px-4 py-3 text-xs font-bold text-slate-500 hidden sm:table-cell">تاریخ</th>
+                <th className="text-right px-4 py-3 text-xs font-bold text-slate-500 hidden md:table-cell">تاریخ</th>
                 <th className="text-right px-4 py-3 text-xs font-bold text-slate-500">مبلغ (ریال)</th>
                 <th className="text-right px-4 py-3 text-xs font-bold text-slate-500">عملیات</th>
               </tr>
@@ -611,13 +656,13 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
                     </span>
                   </td>
                   <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">{inv.customerName}</td>
-                  <td className="px-4 py-3 text-sm text-slate-500 hidden sm:table-cell">{toFa(inv.date)}</td>
-                  <td className="px-4 py-3 text-sm font-bold text-slate-800">{faNum(inv.total)}</td>
+                  <td className="px-4 py-3 text-sm text-slate-500 hidden md:table-cell">{toFa(inv.date)}</td>
+                  <td className="px-4 py-3 text-sm font-bold text-slate-800 whitespace-nowrap">{faNum(inv.total)}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
-                      <button onClick={() => setPrintTarget(inv)} title="مشاهده و چاپ" className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Printer size={15} /></button>
-                      <button onClick={() => startEdit(inv)} title="ویرایش" className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><Pencil size={15} /></button>
-                      <button onClick={() => setDeleteTarget(inv)} title="حذف" className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={15} /></button>
+                      <button onClick={() => setPrintTarget(inv)} title="مشاهده و چاپ" className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><Printer size={15} /></button>
+                      <button onClick={() => startEdit(inv)} title="ویرایش" className="p-2.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"><Pencil size={15} /></button>
+                      <button onClick={() => setDeleteTarget(inv)} title="حذف" className="p-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={15} /></button>
                     </div>
                   </td>
                 </tr>
@@ -625,11 +670,44 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
             </tbody>
           </table>
         </div>
-        {filtered.length === 0 && (
-          <div className="text-center py-12">
-            <FileText size={44} className="mx-auto text-slate-300 mb-3" />
-            <p className="text-slate-500 text-sm">{invoices.length === 0 ? 'هنوز فاکتوری صادر نشده است' : 'نتیجه‌ای برای جستجو یافت نشد'}</p>
+        {filtered.length === 0 && emptyState}
+      </div>
+
+      {/* کارت‌های موبایل */}
+      <div className="sm:hidden space-y-3">
+        {filtered.map(inv => (
+          <div key={inv.id} className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="min-w-0">
+                <p className="text-sm font-black text-slate-800">{toFa(inv.invoiceNumber)}</p>
+                <p className="text-xs text-slate-500 truncate">{inv.customerName}</p>
+              </div>
+              <span className={`shrink-0 text-[11px] px-2 py-1 rounded-full font-bold inline-flex items-center gap-1 ${
+                inv.kind === 'order' ? 'bg-blue-50 text-blue-700' :
+                inv.kind === 'service' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {inv.kind === 'order' ? <ShoppingCart size={11} /> : inv.kind === 'service' ? <Wrench size={11} /> : <Package size={11} />}
+                {kindLabel[inv.kind]}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-2 text-xs text-slate-500 mb-3">
+              <span>{toFa(inv.date)}</span>
+              <span className="font-black text-slate-800 text-sm">{faNum(inv.total)} ریال</span>
+            </div>
+            <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+              <button onClick={() => setPrintTarget(inv)}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl px-3 py-2.5 min-h-[44px] transition-colors">
+                <Printer size={14} /> مشاهده و چاپ
+              </button>
+              <button onClick={() => startEdit(inv)} title="ویرایش"
+                className="p-2.5 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"><Pencil size={15} /></button>
+              <button onClick={() => setDeleteTarget(inv)} title="حذف"
+                className="p-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl min-w-[44px] min-h-[44px] flex items-center justify-center transition-colors"><Trash2 size={15} /></button>
+            </div>
           </div>
+        ))}
+        {filtered.length === 0 && (
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 text-center py-12">{emptyState}</div>
         )}
       </div>
 
@@ -643,27 +721,28 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
         />
       )}
 
-      {/* مودال پیش‌نمایش و چاپ */}
+      {/* مودال پیش‌نمایش و چاپ — در موبایل تمام‌صفحه از بالا */}
       {printTarget && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-6">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[94vh] flex flex-col print-modal">
-            <div className="flex items-center justify-between p-4 border-b border-slate-200 print:hidden">
-              <h3 className="font-black text-slate-900 flex items-center gap-2 text-sm">
-                <Printer size={16} className="text-blue-600" /> پیش‌نمایش فاکتور {toFa(printTarget.invoiceNumber)}
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm overflow-y-auto flex flex-col sm:block sm:items-center sm:justify-center sm:p-6 print:hidden">
+          <div className="bg-white w-full sm:max-w-4xl min-h-full sm:min-h-0 sm:max-h-[94vh] sm:rounded-2xl shadow-2xl flex flex-col print-modal">
+            <div className="flex items-center justify-between gap-2 p-3 sm:p-4 border-b border-slate-200 print:hidden shrink-0">
+              <h3 className="font-black text-slate-900 flex items-center gap-2 text-sm min-w-0">
+                <Printer size={16} className="text-blue-600 shrink-0" />
+                <span className="truncate">پیش‌نمایش فاکتور {toFa(printTarget.invoiceNumber)}</span>
               </h3>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => window.print()}
-                  className="inline-flex items-center gap-2 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-500/30">
+                  className="inline-flex items-center gap-2 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-3 sm:px-4 py-2 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-500/30 min-h-[44px]">
                   <Printer size={15} /> چاپ فاکتور
                 </button>
-                <button onClick={() => setPrintTarget(null)} className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+                <button onClick={() => setPrintTarget(null)} className="p-2.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 min-w-[44px] min-h-[44px] flex items-center justify-center">
                   <X size={18} />
                 </button>
               </div>
             </div>
-            <div className="overflow-y-auto p-3 sm:p-6 bg-slate-100 print:bg-white print:p-0 rounded-b-2xl">
-              <div className="bg-white shadow-lg rounded-lg overflow-hidden mx-auto max-w-[210mm] print:shadow-none print:rounded-none">
+            <div className="overflow-y-auto flex-1 p-3 sm:p-6 bg-slate-100 print:bg-white print:p-0">
+              <div className="bg-white shadow-lg sm:rounded-lg overflow-hidden mx-auto max-w-[210mm] print:shadow-none print:rounded-none">
                 <PrintSheet invoice={printTarget} settings={settings} />
               </div>
             </div>

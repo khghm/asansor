@@ -91,10 +91,20 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
     'لوازم جانبی'
   ];
 
+  // قفل اسکرول صفحه پشت مودال + بستن با کلید Escape
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 sticky top-0 bg-white z-10">
+    // موبایل: تمام‌صفحه از بالا و اسکرول‌پذیر — بدون برش محتوا
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm overflow-y-auto flex flex-col sm:block sm:items-center sm:justify-center sm:p-4">
+      <div className="bg-white w-full sm:max-w-lg min-h-full sm:min-h-0 sm:max-h-[90vh] sm:rounded-2xl shadow-2xl flex flex-col">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-200 sticky top-0 bg-white z-10 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
               <Package className="text-white" size={20} />
@@ -108,7 +118,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
           </button>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5 flex-1">
           <div>
             <label className="block text-sm font-bold text-slate-700 mb-2">نام محصول</label>
             <input
@@ -260,17 +270,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
             <label htmlFor="featured" className="text-sm font-medium text-slate-700">محصول ویژه (نمایش در صفحه اصلی)</label>
           </div>
           
-          <div className="flex gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2 pb-[env(safe-area-inset-bottom)]">
             <button
               type="submit"
-              className="flex-1 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-bold transition-all duration-200 shadow-lg shadow-blue-500/30"
+              className="flex-1 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-[0.98] text-white px-6 py-3.5 sm:py-3 rounded-xl font-bold transition-all duration-200 shadow-lg shadow-blue-500/30 min-h-[48px]"
             >
               {product ? 'بروزرسانی' : 'افزودن محصول'}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-medium transition-all"
+              className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3.5 sm:py-3 rounded-xl font-medium transition-all min-h-[48px]"
             >
               انصراف
             </button>

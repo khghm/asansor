@@ -4,16 +4,17 @@ import { useStore, getStockLevel, getEffectiveThreshold } from '../../context/St
 import { Product, Order, ServiceRequest } from '../../data/store';
 import ProductForm from './ProductForm';
 import SettingsPage from './SettingsPage';
-import InvoicePage from './InvoicePage';
+import InvoicePage, { useBodyScrollLock } from './InvoicePage';
+import AccountingPage from './AccountingPage';
 import ConfirmModal from './ConfirmModal';
 import {
   LayoutDashboard, Package, ShoppingCart, Wrench, LogOut,
   DollarSign, AlertCircle, Plus, Edit, Trash2, Menu,
-  Building2, TrendingUp, CheckCircle2, X, Settings, Receipt
+  Building2, TrendingUp, CheckCircle2, X, Settings, Receipt, Calculator
 } from 'lucide-react';
 import ImageWithFallback from '../../components/ImageWithFallback';
 
-type Tab = 'dashboard' | 'products' | 'orders' | 'services' | 'invoices' | 'settings';
+type Tab = 'dashboard' | 'products' | 'orders' | 'services' | 'invoices' | 'accounting' | 'settings';
 
 interface DeleteConfirm {
   type: 'product' | 'order' | 'service';
@@ -40,6 +41,8 @@ const AdminPanel: React.FC = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [stockFilter, setStockFilter] = useState<'all' | 'low' | 'out'>('all');
+
+  useBodyScrollLock(sidebarOpen || showProductModal);
 
   const formatPrice = (price: number) => new Intl.NumberFormat('fa-IR').format(price);
   const globalThreshold = settings.lowStockThreshold || 10;
@@ -71,6 +74,7 @@ const AdminPanel: React.FC = () => {
     { id: 'orders' as Tab, label: 'سفارشات', icon: <ShoppingCart size={20} /> },
     { id: 'services' as Tab, label: 'درخواست خدمات', icon: <Wrench size={20} /> },
     { id: 'invoices' as Tab, label: 'فاکتور', icon: <Receipt size={20} /> },
+    { id: 'accounting' as Tab, label: 'حسابداری', icon: <Calculator size={20} /> },
     { id: 'settings' as Tab, label: 'تنظیمات سایت', icon: <Settings size={20} /> },
   ];
 
@@ -265,7 +269,7 @@ const AdminPanel: React.FC = () => {
                         <p className="text-base sm:text-2xl font-black text-slate-900 mt-0.5 sm:mt-1 truncate">{stat.value}</p>
                       </div>
                       <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
-                        {React.cloneElement(stat.icon, { size: window.innerWidth < 640 ? 16 : 24 } as any)}
+                        <span className="block [&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-6 sm:[&>svg]:h-6">{stat.icon}</span>
                       </div>
                     </div>
                   </div>
@@ -605,6 +609,9 @@ const AdminPanel: React.FC = () => {
 
           {/* Invoices Tab */}
           {activeTab === 'invoices' && <InvoicePage showToast={showToast} />}
+
+          {/* Accounting Tab */}
+          {activeTab === 'accounting' && <AccountingPage />}
 
           {/* Settings Tab */}
           {activeTab === 'settings' && <SettingsPage />}
