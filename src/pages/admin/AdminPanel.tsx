@@ -3,15 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../context/StoreContext';
 import { Product, Order, ServiceRequest } from '../../data/store';
 import ProductForm from './ProductForm';
+import SettingsPage from './SettingsPage';
 import ConfirmModal from './ConfirmModal';
 import {
   LayoutDashboard, Package, ShoppingCart, Wrench, LogOut,
   DollarSign, AlertCircle, Plus, Edit, Trash2, Menu,
-  Building2, TrendingUp, CheckCircle2, X
+  Building2, TrendingUp, CheckCircle2, X, Settings
 } from 'lucide-react';
 import ImageWithFallback from '../../components/ImageWithFallback';
 
-type Tab = 'dashboard' | 'products' | 'orders' | 'services';
+type Tab = 'dashboard' | 'products' | 'orders' | 'services' | 'settings';
 
 interface DeleteConfirm {
   type: 'product' | 'order' | 'service';
@@ -22,7 +23,7 @@ interface DeleteConfirm {
 const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
   const {
-    products, orders, serviceRequests,
+    products, orders, serviceRequests, settings,
     addProduct, updateProduct, deleteProduct,
     updateOrderStatus, deleteOrder,
     updateServiceStatus, deleteServiceRequest,
@@ -48,6 +49,7 @@ const AdminPanel: React.FC = () => {
     { id: 'products' as Tab, label: 'محصولات', icon: <Package size={20} /> },
     { id: 'orders' as Tab, label: 'سفارشات', icon: <ShoppingCart size={20} /> },
     { id: 'services' as Tab, label: 'درخواست خدمات', icon: <Wrench size={20} /> },
+    { id: 'settings' as Tab, label: 'تنظیمات سایت', icon: <Settings size={20} /> },
   ];
 
   const stats = [
@@ -163,12 +165,16 @@ const AdminPanel: React.FC = () => {
       <aside className={`fixed inset-y-0 right-0 z-40 w-64 sm:w-72 bg-gradient-to-b from-slate-900 to-slate-950 text-white transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
         <div className="p-6 h-full flex flex-col">
           <div className="flex items-center gap-3 mb-10">
-            <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-              <Building2 className="text-white" size={22} />
+            <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 overflow-hidden">
+              {settings.logo ? (
+                <img src={settings.logo} alt={settings.siteName} className="w-full h-full object-contain bg-white" />
+              ) : (
+                <Building2 className="text-white" size={22} />
+              )}
             </div>
             <div>
               <h2 className="font-black">پنل مدیریت</h2>
-              <p className="text-xs text-slate-400">آسانسور آرمند</p>
+              <p className="text-xs text-slate-400">{settings.siteName}</p>
             </div>
           </div>
 
@@ -528,6 +534,9 @@ const AdminPanel: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Settings Tab */}
+          {activeTab === 'settings' && <SettingsPage />}
         </div>
       </main>
 

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Phone, MapPin, Clock, Mail, Send, CheckCircle2, MessageCircle } from 'lucide-react';
+import { useStore } from '../context/StoreContext';
 
 const ContactPage: React.FC = () => {
+  const { settings } = useStore();
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
@@ -35,11 +37,11 @@ const ContactPage: React.FC = () => {
             <h3 className="font-black text-slate-900 mb-6">اطلاعات تماس</h3>
             <ul className="space-y-5">
               {[
-                { icon: <Phone size={18} />, label: 'تلفن تماس اول', value: '۰۹۳۵۴۸۱۷۷۶۶', color: 'bg-orange-50 text-orange-600' },
-                { icon: <Phone size={18} />, label: 'تلفن تماس دوم', value: '۰۹۱۹۱۶۷۴۷۶۲', color: 'bg-amber-50 text-amber-600' },
-                { icon: <MapPin size={18} />, label: 'آدرس', value: 'تهران، خیابان آزادی، پلاک ۱۲۰', color: 'bg-emerald-50 text-emerald-600' },
-                { icon: <Clock size={18} />, label: 'ساعات کاری', value: 'شنبه تا پنجشنبه ۹ تا ۱۸', color: 'bg-blue-50 text-blue-600' },
-                { icon: <Mail size={18} />, label: 'ایمیل', value: 'info@armand-elevator.ir', color: 'bg-purple-50 text-purple-600' },
+                { icon: <Phone size={18} />, label: 'تلفن تماس اول', value: settings.phone1, color: 'bg-orange-50 text-orange-600' },
+                { icon: <Phone size={18} />, label: 'تلفن تماس دوم', value: settings.phone2, color: 'bg-amber-50 text-amber-600' },
+                { icon: <MapPin size={18} />, label: 'آدرس', value: settings.address, color: 'bg-emerald-50 text-emerald-600' },
+                { icon: <Clock size={18} />, label: 'ساعات کاری', value: settings.workingHours, color: 'bg-blue-50 text-blue-600' },
+                { icon: <Mail size={18} />, label: 'ایمیل', value: settings.email, color: 'bg-purple-50 text-purple-600' },
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
                   <div className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center flex-shrink-0`}>

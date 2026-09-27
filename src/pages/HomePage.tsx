@@ -10,7 +10,7 @@ import ImageWithFallback from '../components/ImageWithFallback';
 import HeroCarousel from '../components/HeroCarousel';
 
 const HomePage: React.FC = () => {
-  const { products, addToCart } = useStore();
+  const { products, addToCart, settings } = useStore();
   const featuredProducts = products.filter(p => p.featured).slice(0, 6);
   const [addedToCart, setAddedToCart] = useState<string | null>(null);
 
@@ -284,18 +284,18 @@ const HomePage: React.FC = () => {
           <p className="text-orange-100 mb-10 text-lg">با مهندسی سعید آرمند تماس بگیرید</p>
           <div className="flex flex-wrap justify-center gap-4">
             <a 
-              href="tel:09354817766" 
+              href={`tel:${settings.phone1.replace(/\D/g, "")}`} 
               className="group bg-white text-orange-700 px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3"
             >
               <Phone size={20} />
-              <span>۰۹۳۵۴۸۱۷۷۶۶</span>
+              <span>{settings.phone1}</span>
             </a>
             <a 
-              href="tel:09191674762" 
+              href={`tel:${settings.phone2.replace(/\D/g, "")}`} 
               className="group bg-amber-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-amber-600 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-3"
             >
               <Phone size={20} />
-              <span>۰۹۱۹۱۶۷۴۷۶۲</span>
+              <span>{settings.phone2}</span>
             </a>
             <Link 
               to="/contact" 
