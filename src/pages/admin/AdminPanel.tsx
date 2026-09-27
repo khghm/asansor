@@ -9,7 +9,7 @@ import ConfirmModal from './ConfirmModal';
 import {
   LayoutDashboard, Package, ShoppingCart, Wrench, LogOut,
   DollarSign, AlertCircle, Plus, Edit, Trash2, Menu,
-  Building2, TrendingUp, CheckCircle2, X, Settings, ReceiptText
+  Building2, TrendingUp, CheckCircle2, X, Settings, Receipt
 } from 'lucide-react';
 import ImageWithFallback from '../../components/ImageWithFallback';
 
@@ -70,7 +70,7 @@ const AdminPanel: React.FC = () => {
     { id: 'products' as Tab, label: 'محصولات', icon: <Package size={20} /> },
     { id: 'orders' as Tab, label: 'سفارشات', icon: <ShoppingCart size={20} /> },
     { id: 'services' as Tab, label: 'درخواست خدمات', icon: <Wrench size={20} /> },
-    { id: 'invoices' as Tab, label: 'فاکتور', icon: <ReceiptText size={20} /> },
+    { id: 'invoices' as Tab, label: 'فاکتور', icon: <Receipt size={20} /> },
     { id: 'settings' as Tab, label: 'تنظیمات سایت', icon: <Settings size={20} /> },
   ];
 
