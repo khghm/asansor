@@ -9,6 +9,8 @@ export interface Product {
   featured: boolean;
   // آستانه هشدار موجودی کم برای این محصول (در صورت مقدار خالی/صفر، آستانه سراسری تنظیمات سایت اعمال می‌شود)
   lowStockThreshold?: number;
+  // قیمت تمام‌شده محصول (برای محاسبه بهای تمام‌شده کالای فروش‌رفته و سود در بخش حسابداری)
+  costPrice?: number;
 }
 
 export interface Order {
