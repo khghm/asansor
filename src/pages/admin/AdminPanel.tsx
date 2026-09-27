@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useStore } from '../../context/StoreContext';
+import { useStore, getStockLevel, getEffectiveThreshold } from '../../context/StoreContext';
 import { Product, Order, ServiceRequest } from '../../data/store';
 import ProductForm from './ProductForm';
 import SettingsPage from './SettingsPage';
+import InvoicePage from './InvoicePage';
 import ConfirmModal from './ConfirmModal';
 import {
   LayoutDashboard, Package, ShoppingCart, Wrench, LogOut,
   DollarSign, AlertCircle, Plus, Edit, Trash2, Menu,
-  Building2, TrendingUp, CheckCircle2, X, Settings
+  Building2, TrendingUp, CheckCircle2, X, Settings, ReceiptText
 } from 'lucide-react';
 import ImageWithFallback from '../../components/ImageWithFallback';
 
-type Tab = 'dashboard' | 'products' | 'orders' | 'services' | 'settings';
+type Tab = 'dashboard' | 'products' | 'orders' | 'services' | 'invoices' | 'settings';
 
 interface DeleteConfirm {
   type: 'product' | 'order' | 'service';
@@ -20,11 +21,13 @@ interface DeleteConfirm {
   name: string;
 }
 
+const toFaDigits = (n: number | string) => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
+
 const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
   const {
-    products, orders, serviceRequests, settings,
-    addProduct, updateProduct, deleteProduct,
+    products, orders, serviceRequests, settings, invoices,
+    addProduct, updateProduct, deleteProduct, adjustStock,
     updateOrderStatus, deleteOrder,
     updateServiceStatus, deleteServiceRequest,
     setAdmin
@@ -36,8 +39,26 @@ const AdminPanel: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [stockFilter, setStockFilter] = useState<'all' | 'low' | 'out'>('all');
 
   const formatPrice = (price: number) => new Intl.NumberFormat('fa-IR').format(price);
+  const globalThreshold = settings.lowStockThreshold || 10;
+
+  // ---- موتور هشدار موجودی کم (عملیاتی، مبتنی بر آستانه سراسری + اختصاصی محصول) ----
+  const stockAlerts = useMemo(
+    () => products
+      .map(p => ({ product: p, level: getStockLevel(p, globalThreshold), threshold: getEffectiveThreshold(p, globalThreshold) }))
+      .filter(a => a.level !== 'ok')
+      .sort((a, b) => a.product.stock - b.product.stock),
+    [products, globalThreshold]
+  );
+  const outOfStockCount = stockAlerts.filter(a => a.level === 'out').length;
+  const lowStockCount = stockAlerts.length - outOfStockCount;
+
+  const visibleProducts = useMemo(() => {
+    if (stockFilter === 'all') return products;
+    return products.filter(p => getStockLevel(p, globalThreshold) === (stockFilter === 'out' ? 'out' : 'low'));
+  }, [products, stockFilter, globalThreshold]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
     setToast({ message, type });
@@ -49,13 +70,14 @@ const AdminPanel: React.FC = () => {
     { id: 'products' as Tab, label: 'محصولات', icon: <Package size={20} /> },
     { id: 'orders' as Tab, label: 'سفارشات', icon: <ShoppingCart size={20} /> },
     { id: 'services' as Tab, label: 'درخواست خدمات', icon: <Wrench size={20} /> },
+    { id: 'invoices' as Tab, label: 'فاکتور', icon: <ReceiptText size={20} /> },
     { id: 'settings' as Tab, label: 'تنظیمات سایت', icon: <Settings size={20} /> },
   ];
 
   const stats = [
     { label: 'کل محصولات', value: products.length, icon: <Package size={24} />, color: 'from-blue-500 to-blue-600' },
     { label: 'سفارشات جدید', value: orders.filter(o => o.status === 'pending').length, icon: <ShoppingCart size={24} />, color: 'from-orange-500 to-orange-600' },
-    { label: 'درخواست خدمات', value: serviceRequests.filter(s => s.status === 'new').length, icon: <Wrench size={24} />, color: 'from-emerald-500 to-emerald-600' },
+    { label: 'هشدار موجودی (کم/تمام)', value: `${toFaDigits(lowStockCount)} / ${toFaDigits(outOfStockCount)}`, icon: <AlertCircle size={24} />, color: 'from-red-500 to-rose-600' },
     { label: 'درآمد کل', value: formatPrice(orders.reduce((sum, o) => sum + o.total, 0)) + ' ت', icon: <DollarSign size={24} />, color: 'from-purple-500 to-purple-600' },
   ];
 
@@ -178,7 +200,7 @@ const AdminPanel: React.FC = () => {
             </div>
           </div>
 
-          <nav className="space-y-1 flex-1">
+          <nav className="space-y-1 flex-1 overflow-y-auto">
             {tabs.map(tab => (
               <button
                 key={tab.id}
@@ -191,6 +213,11 @@ const AdminPanel: React.FC = () => {
               >
                 {tab.icon}
                 <span>{tab.label}</span>
+                {tab.id === 'dashboard' && stockAlerts.length > 0 && (
+                  <span className="mr-auto min-w-[22px] h-[22px] px-1.5 rounded-full bg-red-500 text-white text-[11px] font-black flex items-center justify-center animate-pulse">
+                    {toFaDigits(stockAlerts.length)}
+                  </span>
+                )}
               </button>
             ))}
           </nav>
@@ -293,40 +320,66 @@ const AdminPanel: React.FC = () => {
                 </div>
               </div>
 
-              {products.filter(p => p.stock < 10).length > 0 && (
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
-                  <h3 className="font-black text-slate-900 mb-4 flex items-center gap-2">
-                    <AlertCircle size={18} className="text-orange-500" />
-                    هشدار موجودی کم
+              {/* پنل عملیاتی هشدار موجودی — هماهنگ با آستانه سراسری/اختصاصی محصولات */}
+              <div className={`rounded-2xl shadow-sm border p-5 ${stockAlerts.length > 0 ? 'bg-orange-50/60 border-orange-200' : 'bg-emerald-50/60 border-emerald-200'}`}>
+                <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
+                  <h3 className="font-black text-slate-900 flex items-center gap-2">
+                    <AlertCircle size={18} className={stockAlerts.length > 0 ? 'text-orange-500 animate-pulse' : 'text-emerald-600'} />
+                    وضعیت موجودی انبار
+                    {stockAlerts.length > 0 && (
+                      <span className="text-[11px] bg-red-500 text-white rounded-full px-2 py-0.5 font-bold">
+                        {toFaDigits(stockAlerts.length)} هشدار فعال
+                      </span>
+                    )}
                   </h3>
+                  <button onClick={() => handleTabChange('products')} className="text-xs font-bold text-blue-600 hover:text-blue-700">
+                    مدیریت موجودی در بخش محصولات ←
+                  </button>
+                </div>
+                {stockAlerts.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {products.filter(p => p.stock < 10).map(p => (
-                      <div key={p.id} className="flex items-center gap-3 p-3 bg-orange-50 rounded-xl border border-orange-100">
-                        <ImageWithFallback
-                          src={p.image}
-                          alt={p.name}
-                          category={p.category}
-                          className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
-                        />
-                        <div>
-                          <p className="text-sm font-bold text-slate-800">{p.name}</p>
-                          <p className="text-xs text-orange-600 font-medium">فقط {p.stock} عدد</p>
+                    {stockAlerts.slice(0, 9).map(({ product: p, level, threshold }) => (
+                      <div key={p.id} className={`flex items-center gap-3 p-3 rounded-xl border ${level === 'out' ? 'bg-red-50 border-red-200' : 'bg-orange-50 border-orange-200'}`}>
+                        <ImageWithFallback src={p.image} alt={p.name} category={p.category} className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-bold text-slate-800 truncate">{p.name}</p>
+                          <p className={`text-xs font-medium ${level === 'out' ? 'text-red-600' : 'text-orange-600'}`}>
+                            {level === 'out' ? 'موجودی تمام شده' : `فقط ${toFaDigits(p.stock)} عدد (آستانه: ${toFaDigits(threshold)})`}
+                          </p>
+                          <div className="flex items-center gap-1 mt-1.5">
+                            <button onClick={() => { adjustStock(p.id, 5); showToast(`۵ عدد به موجودی «${p.name}» افزوده شد`); }}
+                              className="text-[10px] font-bold bg-white border border-slate-200 rounded-lg px-2 py-1 hover:bg-slate-50 text-slate-700 transition-colors">+۵ شارژ</button>
+                            <button onClick={() => handleEditProduct(p)}
+                              className="text-[10px] font-bold bg-white border border-slate-200 rounded-lg px-2 py-1 hover:bg-slate-50 text-blue-600 transition-colors">ویرایش</button>
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <p className="text-sm text-emerald-700 font-medium flex items-center gap-2">
+                    <CheckCircle2 size={16} /> موجودی تمام محصولات بالای آستانه هشدار است ✓
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
           {/* Products Tab */}
           {activeTab === 'products' && (
             <div className="animate-fade-in">
-              <div className="flex items-center justify-between mb-6">
-                <p className="text-sm text-slate-500 font-medium">
-                  <span className="text-slate-900 font-bold">{products.length}</span> محصول
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-sm text-slate-500 font-medium ml-2">
+                    <span className="text-slate-900 font-bold">{products.length}</span> محصول
+                  </p>
+                  {(['all','low','out'] as const).map(f => (
+                    <button key={f} onClick={() => setStockFilter(f)}
+                      className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${stockFilter===f ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:border-blue-400'}`}>
+                      {f==='all' ? 'همه' : f==='low' ? `موجودی کم (${toFaDigits(lowStockCount)})` : `تمام شده (${toFaDigits(outOfStockCount)})`}
+                    </button>
+                  ))}
+                </div>
                 <button
                   onClick={handleAddProduct}
                   className="bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold transition-all duration-200 shadow-lg shadow-blue-500/30 flex items-center gap-2 text-sm"
@@ -349,7 +402,7 @@ const AdminPanel: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {products.map(product => (
+                      {visibleProducts.map(product => (
                         <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-3">
@@ -368,9 +421,24 @@ const AdminPanel: React.FC = () => {
                           <td className="px-5 py-4 text-sm text-slate-600 hidden md:table-cell">{product.category}</td>
                           <td className="px-5 py-4 text-sm text-slate-800 font-bold">{formatPrice(product.price)} ت</td>
                           <td className="px-5 py-4">
-                            <span className={`text-sm font-bold ${product.stock < 10 ? 'text-orange-600' : 'text-slate-600'}`}>
-                              {product.stock}
-                            </span>
+                            {(() => {
+                              const lvl = getStockLevel(product, globalThreshold);
+                              return (
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`text-sm font-bold ${lvl==='out' ? 'text-red-600' : lvl==='low' ? 'text-orange-600' : 'text-slate-600'}`}>
+                                    {toFaDigits(product.stock)}
+                                  </span>
+                                  {lvl==='out' && <span className="text-[10px] bg-red-100 text-red-700 rounded-full px-2 py-0.5 font-bold">اتمام</span>}
+                                  {lvl==='low' && <span className="text-[10px] bg-orange-100 text-orange-700 rounded-full px-2 py-0.5 font-bold">کم</span>}
+                                  <div className="flex items-center mr-1">
+                                    <button onClick={() => { adjustStock(product.id, -1); }} title="کسر یک عدد"
+                                      className="p-1 text-slate-400 hover:text-red-500 rounded-md hover:bg-red-50 transition-colors"><X size={12}/></button>
+                                    <button onClick={() => { adjustStock(product.id, 1); showToast('موجودی افزایش یافت'); }} title="افزودن یک عدد"
+                                      className="p-1 text-slate-400 hover:text-emerald-600 rounded-md hover:bg-emerald-50 transition-colors"><Plus size={12}/></button>
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </td>
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-1">
@@ -395,10 +463,10 @@ const AdminPanel: React.FC = () => {
                     </tbody>
                   </table>
                 </div>
-                {products.length === 0 && (
+                {visibleProducts.length === 0 && (
                   <div className="text-center py-12">
                     <Package size={48} className="mx-auto text-slate-300 mb-4" />
-                    <p className="text-slate-500">محصولی ثبت نشده است</p>
+                    <p className="text-slate-500">{stockFilter==='all' ? 'محصولی ثبت نشده است' : 'محصولی با این فیلتر وجود ندارد'}</p>
                   </div>
                 )}
               </div>
@@ -534,6 +602,9 @@ const AdminPanel: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Invoices Tab */}
+          {activeTab === 'invoices' && <InvoicePage showToast={showToast} />}
 
           {/* Settings Tab */}
           {activeTab === 'settings' && <SettingsPage />}

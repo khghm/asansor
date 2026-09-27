@@ -183,3 +183,38 @@
 .group:hover .img-zoom {
   transform: scale(1.08);
 }
+
+/* ---------- چاپ فاکتور: فقط برگه فاکتور چاپ شود ---------- */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-modal,
+  .print-modal * {
+    visibility: visible;
+  }
+  .print-modal {
+    position: absolute !important;
+    inset: 0 auto auto 0;
+    width: 100%;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+  .print-modal .overflow-y-auto {
+    overflow: visible !important;
+    max-height: none !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  .print-sheet {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}

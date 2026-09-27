@@ -7,6 +7,8 @@ export interface Product {
   image: string;
   stock: number;
   featured: boolean;
+  // آستانه هشدار موجودی کم برای این محصول (در صورت مقدار خالی/صفر، آستانه سراسری تنظیمات سایت اعمال می‌شود)
+  lowStockThreshold?: number;
 }
 
 export interface Order {
@@ -31,11 +33,120 @@ export interface ServiceRequest {
   date: string;
 }
 
+export type InvoiceItemType = 'product' | 'service';
+
+export interface InvoiceItem {
+  id: string;
+  description: string;
+  type: InvoiceItemType;
+  unit: string;
+  quantity: number;
+  unitPrice: number;
+  productId?: string;
+}
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  kind: 'order' | 'service' | 'standalone';
+  refId?: string;
+  date: string;
+  customerName: string;
+  customerCompany?: string;
+  customerPhone: string;
+  customerAddress?: string;
+  items: InvoiceItem[];
+  discountPercent: number;
+  taxEnabled: boolean;
+  notes?: string;
+  total: number;
+}
+
+// محاسبات مشترک فاکتور (بین فرم سازنده و پیش‌نمایش/چاپ)
+export const calcInvoiceLineTotal = (item: InvoiceItem): number =>
+  Math.round(item.quantity * item.unitPrice);
+
+export interface InvoiceTotals {
+  subtotal: number;
+  discountAmount: number;
+  taxAmount: number;
+  grandTotal: number;
+}
+
+export const TAX_RATE = 0.1; // مالیات بر ارزش افزوده ۱۰٪
+
+export const calcInvoiceTotals = (
+  items: InvoiceItem[],
+  discountPercent: number,
+  taxEnabled: boolean
+): InvoiceTotals => {
+  const subtotal = items.reduce((s, it) => s + calcInvoiceLineTotal(it), 0);
+  const dp = Math.min(Math.max(discountPercent || 0, 0), 100);
+  const discountAmount = Math.round(subtotal * (dp / 100));
+  const afterDiscount = subtotal - discountAmount;
+  const taxAmount = taxEnabled ? Math.round(afterDiscount * TAX_RATE) : 0;
+  return { subtotal, discountAmount, taxAmount, grandTotal: afterDiscount + taxAmount };
+};
+
+// شمارنده معادل لاتین حروف فارسی برای درج «حرفی» مبلغ روی فاکتور
+const ONES_FA = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه', 'ده',
+  'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+const TENS_FA = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'];
+const HUNDREDS_FA = ['', 'یکصد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+const GROUP_NAMES_FA = ['', 'هزار', 'میلیون', 'میلیارد', 'تریلیون'];
+
+const threeDigitsToWordsFa = (n: number): string => {
+  if (n <= 0) return '';
+  const h = Math.floor(n / 100);
+  const r = n % 100;
+  const parts: string[] = [];
+  if (h > 0) parts.push(HUNDREDS_FA[h]);
+  if (r > 0) {
+    if (r < 20) parts.push(ONES_FA[r]);
+    else {
+      const t = Math.floor(r / 10);
+      const u = r % 10;
+      if (u > 0) parts.push(`${TENS_FA[t]} و ${ONES_FA[u]}`);
+      else parts.push(TENS_FA[t]);
+    }
+  }
+  return parts.join(' و ');
+};
+
+export const numberToPersianWords = (num: number): string => {
+  const n = Math.floor(Math.abs(num));
+  if (n === 0) return 'صفر';
+  const groups: number[] = [];
+  let rest = n;
+  while (rest > 0) {
+    groups.push(rest % 1000);
+    rest = Math.floor(rest / 1000);
+  }
+  const parts: string[] = [];
+  for (let i = groups.length - 1; i >= 0; i--) {
+    const g = groups[i];
+    if (g === 0) continue;
+    const words = threeDigitsToWordsFa(g);
+    const name = GROUP_NAMES_FA[i];
+    parts.push(name ? `${words} ${name}` : words);
+  }
+  const joined = parts.join(' و ');
+  return num < 0 ? `منفی ${joined}` : joined;
+};
+
 export interface SiteSettings {
   siteName: string;
   siteSubtitle: string;
   companyDescription: string;
   logo: string;
+  lowStockThreshold: number;
+  invoicePrefix: string;
+  taxNumber: string;
+  economicCode: string;
+  bankName: string;
+  accountNumber: string;
+  cardNumber: string;
+  shebaNumber: string;
   phone1: string;
   phone2: string;
   landline: string;
@@ -53,6 +164,14 @@ export const defaultSiteSettings: SiteSettings = {
   siteSubtitle: 'لوازم یدکی و خدمات تخصصی',
   companyDescription: 'فروشگاه لوازم یدکی آسانسور آرمند با بیش از ۱۵ سال سابقه در زمینه فروش، نصب و تعمیر انواع آسانسور در خدمت شماست.',
   logo: '',
+  lowStockThreshold: 10,
+  invoicePrefix: 'INV',
+  taxNumber: '',
+  economicCode: '',
+  bankName: 'بانک ملت',
+  accountNumber: '',
+  cardNumber: '6104-3378-0000-0000',
+  shebaNumber: '',
   phone1: '۰۹۳۵۴۸۱۷۷۶۶',
   phone2: '۰۹۱۹۱۶۷۴۷۶۲',
   landline: '۰۲۱-۱۲۳۴۵۶۷۸',

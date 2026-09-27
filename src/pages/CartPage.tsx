@@ -5,7 +5,7 @@ import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, Package } f
 import ImageWithFallback from '../components/ImageWithFallback';
 
 const CartPage: React.FC = () => {
-  const { cart, removeFromCart, updateCartQuantity, clearCart, cartTotal, addOrder } = useStore();
+  const { cart, removeFromCart, updateCartQuantity, clearCart, cartTotal, addOrder, adjustStock } = useStore();
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -34,6 +34,8 @@ const CartPage: React.FC = () => {
     };
     
     addOrder(order);
+    // کسر عملیاتی موجودی انبار پس از ثبت سفارش
+    cart.forEach(item => adjustStock(item.product.id, -item.quantity));
     clearCart();
     setIsProcessing(false);
     setOrderPlaced(true);
