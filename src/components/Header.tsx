@@ -6,7 +6,7 @@ import { ShoppingCart, Menu, X, Shield, Phone, ChevronDown, Building2 } from 'lu
 const Header: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { cartCount, isAdmin } = useStore();
+  const { cartCount, isAdmin, settings } = useStore();
   const location = useLocation();
 
   useEffect(() => {
@@ -37,16 +37,20 @@ const Header: React.FC = () => {
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative">
               <div className="w-11 h-11 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/50 transition-all duration-300 relative overflow-hidden">
-                <Building2 className="text-white relative z-10" size={22} />
+                {settings.logo ? (
+                  <img src={settings.logo} alt={settings.siteName} className="absolute inset-0 w-full h-full object-contain bg-white" />
+                ) : (
+                  <Building2 className="text-white relative z-10" size={22} />
+                )}
                 <div className="absolute inset-0 shimmer"></div>
               </div>
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white"></div>
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg font-extrabold bg-gradient-to-l from-orange-600 to-amber-500 bg-clip-text text-transparent">
-                مهندسی آرمند
+                {settings.siteName}
               </h1>
-              <p className="text-[11px] text-slate-500 font-medium -mt-0.5">لوازم یدکی و خدمات تخصصی</p>
+              <p className="text-[11px] text-slate-500 font-medium -mt-0.5">{settings.siteSubtitle}</p>
             </div>
           </Link>
 
@@ -73,11 +77,11 @@ const Header: React.FC = () => {
           {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
             <a 
-              href="tel:02112345678" 
+              href={`tel:${settings.landline.replace(/[^\d+]/g, '')}`} 
               className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-all"
             >
               <Phone size={16} />
-              <span className="font-medium">۰۲۱-۱۲۳۴۵۶۷۸</span>
+              <span className="font-medium">{settings.landline}</span>
             </a>
             
             <Link 

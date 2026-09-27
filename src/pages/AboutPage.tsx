@@ -1,7 +1,9 @@
 import React from 'react';
 import { Award, Users, Calendar, CheckCircle2, Building2, Target, Heart, Phone } from 'lucide-react';
+import { useStore } from '../context/StoreContext';
 
 const AboutPage: React.FC = () => {
+  const { settings } = useStore();
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="mb-12">
@@ -109,13 +111,13 @@ const AboutPage: React.FC = () => {
             بیش از ۱۵ سال تجربه در طراحی، نصب و تعمیر انواع آسانسور. متخصص در سیستم‌های کنترل و ایمنی آسانسور با دانش فنی بالا و تجربه عملی گسترده.
           </p>
           <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="tel:09354817766" className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30">
+            <a href={`tel:${settings.phone1.replace(/\D/g, '')}`} className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-orange-500/30">
               <Phone size={18} />
-              <span>۰۹۳۵۴۸۱۷۷۶۶</span>
+              <span>{settings.phone1}</span>
             </a>
-            <a href="tel:09191674762" className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/30">
+            <a href={`tel:${settings.phone2.replace(/\D/g, '')}`} className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/30">
               <Phone size={18} />
-              <span>۰۹۱۹۱۶۷۴۷۶۲</span>
+              <span>{settings.phone2}</span>
             </a>
           </div>
         </div>

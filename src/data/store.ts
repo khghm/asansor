@@ -31,6 +31,40 @@ export interface ServiceRequest {
   date: string;
 }
 
+export interface SiteSettings {
+  siteName: string;
+  siteSubtitle: string;
+  companyDescription: string;
+  logo: string;
+  phone1: string;
+  phone2: string;
+  landline: string;
+  email: string;
+  address: string;
+  workingHours: string;
+  copyrightText: string;
+  instagramUrl: string;
+  telegramUrl: string;
+  whatsappUrl: string;
+}
+
+export const defaultSiteSettings: SiteSettings = {
+  siteName: 'مهندسی آرمند',
+  siteSubtitle: 'لوازم یدکی و خدمات تخصصی',
+  companyDescription: 'فروشگاه لوازم یدکی آسانسور آرمند با بیش از ۱۵ سال سابقه در زمینه فروش، نصب و تعمیر انواع آسانسور در خدمت شماست.',
+  logo: '',
+  phone1: '۰۹۳۵۴۸۱۷۷۶۶',
+  phone2: '۰۹۱۹۱۶۷۴۷۶۲',
+  landline: '۰۲۱-۱۲۳۴۵۶۷۸',
+  email: 'info@armand-elevator.ir',
+  address: 'تهران، خیابان آزادی، پلاک ۱۲۰',
+  workingHours: 'شنبه تا پنجشنبه ۹ تا ۱۸',
+  copyrightText: '© ۱۴۰۳ فروشگاه لوازم یدکی آسانسور آرمند. تمامی حقوق محفوظ است.',
+  instagramUrl: '',
+  telegramUrl: '',
+  whatsappUrl: '',
+};
+
 export const categories = [
   'موتور آسانسور',
   'تابلو فرمان',

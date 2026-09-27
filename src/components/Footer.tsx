@@ -1,8 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useStore } from '../context/StoreContext';
 import { Phone, MapPin, Clock, Mail, Building2, Instagram, Send, MessageCircle } from 'lucide-react';
 
+const toTel = (v: string) => v.replace(/\D/g, '');
+
 const Footer: React.FC = () => {
+  const { settings } = useStore();
+  const socialLinks = [
+    { icon: <Instagram size={16} />, url: settings.instagramUrl, hover: 'hover:bg-blue-600', label: 'اینستاگرام' },
+    { icon: <Send size={16} />, url: settings.telegramUrl, hover: 'hover:bg-blue-500', label: 'تلگرام' },
+    { icon: <MessageCircle size={16} />, url: settings.whatsappUrl, hover: 'hover:bg-green-600', label: 'واتساپ' },
+  ];
   return (
     <footer className="bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -11,27 +20,27 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-11 h-11 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center relative overflow-hidden">
-                <Building2 className="text-white relative z-10" size={22} />
+                {settings.logo ? (
+                  <img src={settings.logo} alt={settings.siteName} className="absolute inset-0 w-full h-full object-contain bg-white" />
+                ) : (
+                  <Building2 className="text-white relative z-10" size={22} />
+                )}
                 <div className="absolute inset-0 shimmer"></div>
               </div>
               <div>
-                <h3 className="text-white font-extrabold text-lg">مهندسی آرمند</h3>
-                <p className="text-xs text-slate-400">مهندسی سعید آرمند</p>
+                <h3 className="text-white font-extrabold text-lg">{settings.siteName}</h3>
+                <p className="text-xs text-slate-400">{settings.siteSubtitle}</p>
               </div>
             </div>
             <p className="text-sm leading-7 text-slate-400">
-              فروشگاه لوازم یدکی آسانسور آرمند با بیش از ۱۵ سال سابقه در زمینه فروش، نصب و تعمیر انواع آسانسور در خدمت شماست.
+              {settings.companyDescription}
             </p>
             <div className="flex gap-3 mt-5">
-              <a href="#" className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-blue-600 flex items-center justify-center transition-all duration-300">
-                <Instagram size={16} />
-              </a>
-              <a href="#" className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-blue-500 flex items-center justify-center transition-all duration-300">
-                <Send size={16} />
-              </a>
-              <a href="#" className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-green-600 flex items-center justify-center transition-all duration-300">
-                <MessageCircle size={16} />
-              </a>
+              {socialLinks.map((social, i) => (
+                <a key={i} href={social.url || '#'} target="_blank" rel="noopener noreferrer" title={social.label} className={`w-9 h-9 rounded-lg bg-slate-800 ${social.hover} flex items-center justify-center transition-all duration-300`}>
+                  {social.icon}
+                </a>
+              ))}
             </div>
           </div>
 
@@ -74,20 +83,20 @@ const Footer: React.FC = () => {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Phone size={14} className="text-orange-400" />
+                  <a href={`tel:${toTel(settings.phone1)}`}><Phone size={14} className="text-orange-400" /></a>
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">تلفن تماس اول</p>
-                  <p className="text-sm text-slate-300">۰۹۳۵۴۸۱۷۷۶۶</p>
+                  <p className="text-sm text-slate-300">{settings.phone1}</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Phone size={14} className="text-amber-400" />
+                  <a href={`tel:${toTel(settings.phone2)}`}><Phone size={14} className="text-amber-400" /></a>
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">تلفن تماس دوم</p>
-                  <p className="text-sm text-slate-300">۰۹۱۹۱۶۷۴۷۶۲</p>
+                  <p className="text-sm text-slate-300">{settings.phone2}</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -96,7 +105,7 @@ const Footer: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">آدرس</p>
-                  <p className="text-sm text-slate-300">تهران، خیابان آزادی، پلاک ۱۲۰</p>
+                  <p className="text-sm text-slate-300">{settings.address}</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -105,7 +114,7 @@ const Footer: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">ساعات کاری</p>
-                  <p className="text-sm text-slate-300">شنبه تا پنجشنبه ۹ تا ۱۸</p>
+                  <p className="text-sm text-slate-300">{settings.workingHours}</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -114,7 +123,7 @@ const Footer: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-0.5">ایمیل</p>
-                  <p className="text-sm text-slate-300">info@armand-elevator.ir</p>
+                  <p className="text-sm text-slate-300">{settings.email}</p>
                 </div>
               </li>
             </ul>
@@ -123,7 +132,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-500">
-            © ۱۴۰۳ فروشگاه لوازم یدکی آسانسور آرمند. تمامی حقوق محفوظ است.
+            {settings.copyrightText}
           </p>
           <div className="flex items-center gap-4 text-xs text-slate-500">
             <a href="#" className="hover:text-slate-300 transition-colors">قوانین و مقررات</a>

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Product, Order, ServiceRequest, initialProducts, initialOrders, initialServiceRequests } from '../data/store';
+import { Product, Order, ServiceRequest, SiteSettings, initialProducts, initialOrders, initialServiceRequests, defaultSiteSettings } from '../data/store';
 
 interface CartItem {
   product: Product;
@@ -12,7 +12,10 @@ interface StoreContextType {
   serviceRequests: ServiceRequest[];
   cart: CartItem[];
   isAdmin: boolean;
+  settings: SiteSettings;
   setAdmin: (v: boolean) => void;
+  updateSettings: (s: SiteSettings) => void;
+  resetSettings: () => void;
   addProduct: (p: Product) => void;
   updateProduct: (p: Product) => void;
   deleteProduct: (id: string) => void;
@@ -77,6 +80,15 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   });
 
+  const [settings, setSettings] = useState<SiteSettings>(() => {
+    try {
+      const saved = localStorage.getItem('arvand_settings');
+      return saved ? { ...defaultSiteSettings, ...JSON.parse(saved) } : defaultSiteSettings;
+    } catch {
+      return defaultSiteSettings;
+    }
+  });
+
   // Persist to localStorage
   useEffect(() => {
     try {
@@ -117,6 +129,22 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       console.error('Failed to save admin state:', e);
     }
   }, [isAdmin]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('arvand_settings', JSON.stringify(settings));
+    } catch (e) {
+      console.error('Failed to save settings:', e);
+    }
+  }, [settings]);
+
+  const updateSettings = (s: SiteSettings) => {
+    setSettings(s);
+  };
+
+  const resetSettings = () => {
+    setSettings(defaultSiteSettings);
+  };
 
   const setAdmin = (v: boolean) => {
     setIsAdmin(v);
@@ -199,8 +227,8 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   return (
     <StoreContext.Provider value={{
-      products, orders, serviceRequests, cart, isAdmin,
-      setAdmin,
+      products, orders, serviceRequests, cart, isAdmin, settings,
+      setAdmin, updateSettings, resetSettings,
       addProduct, updateProduct, deleteProduct,
       addOrder, updateOrderStatus, deleteOrder,
       addServiceRequest, updateServiceStatus, deleteServiceRequest,
