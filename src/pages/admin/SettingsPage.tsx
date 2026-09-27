@@ -3,7 +3,7 @@ import { useStore } from '../../context/StoreContext';
 import { SiteSettings, defaultSiteSettings } from '../../data/store';
 import {
   Save, Upload, Trash2, ImageIcon, Settings as SettingsIcon,
-  Building2, Phone, Share2, RotateCcw, CheckCircle2, AlertTriangle, ReceiptText
+  Building2, Phone, Share2, RotateCcw, CheckCircle2, AlertTriangle, Receipt
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 
@@ -233,7 +233,7 @@ const SettingsPage: React.FC = () => {
         </SectionCard>
 
         {/* اطلاعات فاکتور */}
-        <SectionCard title="اطلاعات فاکتور و حساب‌های بانکی" icon={<ReceiptText size={18} />}>
+        <SectionCard title="اطلاعات فاکتور و حساب‌های بانکی" icon={<Receipt size={18} />}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Field label="پیشوند شماره فاکتور" value={form.invoicePrefix} onChange={setField('invoicePrefix')} dir="ltr" placeholder="INV" hint="مثلاً INV-1403-001" />
             <Field label="شماره ثبت / شناسه ملی شرکت" value={form.taxNumber} onChange={setField('taxNumber')} dir="ltr" placeholder="10101234567" />

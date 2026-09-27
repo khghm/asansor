@@ -6,7 +6,7 @@ import {
 } from '../../data/store';
 import {
   Plus, Trash2, Printer, X, Save, Search, FileText, ShoppingCart,
-  Wrench, Package, AlertTriangle, ReceiptText, Pencil
+  Wrench, Package, AlertTriangle, Receipt, Pencil
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
 
@@ -85,7 +85,7 @@ const PrintSheet: React.FC<PrintSheetProps> = ({ invoice, settings }) => {
             {settings.logo ? (
               <img src={settings.logo} alt={settings.siteName} className="max-w-full max-h-full object-contain" />
             ) : (
-              <ReceiptText size={26} className="text-slate-500" />
+              <Receipt size={26} className="text-slate-500" />
             )}
           </div>
           <div>
@@ -553,7 +553,7 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
                 </div>
                 <button onClick={() => fromOrder(o)}
                   className="shrink-0 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
-                  <ReceiptText size={12} /> صدور فاکتور
+                  <Receipt size={12} /> صدور فاکتور
                 </button>
               </div>
             ))}
@@ -574,7 +574,7 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
                 </div>
                 <button onClick={() => fromService(s)}
                   className="shrink-0 text-[11px] font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
-                  <ReceiptText size={12} /> صدور فاکتور
+                  <Receipt size={12} /> صدور فاکتور
                 </button>
               </div>
             ))}
