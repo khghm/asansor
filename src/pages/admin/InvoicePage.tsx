@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useStore } from '../../context/StoreContext';
 import {
   Invoice, InvoiceItem, Order, ServiceRequest, SiteSettings,
@@ -130,8 +131,8 @@ const PrintSheet: React.FC<PrintSheetProps> = ({ invoice, settings }) => {
         {invoice.customerAddress && <p className="sm:col-span-2"><span className="text-slate-500">آدرس: </span>{invoice.customerAddress}</p>}
       </div>
 
-      {/* جدول اقلام — در موبایل به کارت تبدیل می‌شود */}
-      <div className="print:hidden">
+      {/* جدول اقلام — در موبایل به کارت تبدیل می‌شود (در چاپ با کلاس print-hidden پنهان می‌ماند) */}
+      <div className="print-hidden sm:hidden">
         {invoice.items.map((item, i) => (
           <div key={item.id} className="border border-slate-300 rounded-md p-2.5 mb-2 text-xs">
             <div className="flex items-start justify-between gap-2 mb-1.5">
@@ -152,7 +153,7 @@ const PrintSheet: React.FC<PrintSheetProps> = ({ invoice, settings }) => {
       </div>
 
       {/* جدول اقلام (نسخه چاپی A4) */}
-      <table className="w-full border-collapse text-xs mb-5 hidden print:table">
+      <table className="w-full border-collapse text-xs mb-5 hidden sm:table">
         <thead>
           <tr className="bg-slate-100 print:bg-gray-100">
             <th className="border border-slate-300 px-2 py-2 text-center w-8">ردیف</th>
@@ -334,7 +335,7 @@ const InvoiceBuilder: React.FC<InvoiceBuilderProps> = ({ initial, editingId, onC
 
   return (
     // موبایل: فرم تمام‌صفحه و اسکرول‌پذیر از بالا (بدون وسط‌چین کردن عمودی که باعث برش محتوا می‌شد)
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm overflow-y-auto flex flex-col sm:block sm:items-center sm:justify-center sm:p-4 print:hidden">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm overflow-y-auto flex flex-col sm:block sm:items-center sm:justify-center sm:p-4">
       <div className="bg-white w-full sm:max-w-4xl min-h-full sm:min-h-0 sm:max-h-[94vh] sm:rounded-2xl shadow-2xl flex flex-col">
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-200 sticky top-0 bg-white z-10">
           <div className="flex items-center gap-3">
@@ -721,11 +722,11 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
         />
       )}
 
-      {/* مودال پیش‌نمایش و چاپ — در موبایل تمام‌صفحه از بالا */}
-      {printTarget && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm overflow-y-auto flex flex-col sm:block sm:items-center sm:justify-center sm:p-6 print:hidden">
+      {/* مودال پیش‌نمایش و چاپ — ریشه چاپ جداگانه زیر body تا چاپ خالی نشود */}
+      {printTarget && createPortal(
+        <div className="print-root fixed inset-0 z-50 bg-black/70 backdrop-blur-sm overflow-y-auto flex flex-col sm:block sm:items-center sm:justify-center sm:p-6">
           <div className="bg-white w-full sm:max-w-4xl min-h-full sm:min-h-0 sm:max-h-[94vh] sm:rounded-2xl shadow-2xl flex flex-col print-modal">
-            <div className="flex items-center justify-between gap-2 p-3 sm:p-4 border-b border-slate-200 print:hidden shrink-0">
+            <div className="print-hidden flex items-center justify-between gap-2 p-3 sm:p-4 border-b border-slate-200 shrink-0">
               <h3 className="font-black text-slate-900 flex items-center gap-2 text-sm min-w-0">
                 <Printer size={16} className="text-blue-600 shrink-0" />
                 <span className="truncate">پیش‌نمایش فاکتور {toFa(printTarget.invoiceNumber)}</span>
@@ -741,13 +742,14 @@ const InvoicePage: React.FC<{ showToast?: (m: string, t?: 'success' | 'error' | 
                 </button>
               </div>
             </div>
-            <div className="overflow-y-auto flex-1 p-3 sm:p-6 bg-slate-100 print:bg-white print:p-0">
-              <div className="bg-white shadow-lg sm:rounded-lg overflow-hidden mx-auto max-w-[210mm] print:shadow-none print:rounded-none">
+            <div className="print-scroll overflow-y-auto flex-1 p-3 sm:p-6 bg-slate-100">
+              <div className="bg-white shadow-lg sm:rounded-lg overflow-hidden mx-auto max-w-[210mm]">
                 <PrintSheet invoice={printTarget} settings={settings} />
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <ConfirmModal
