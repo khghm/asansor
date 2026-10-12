@@ -6,6 +6,7 @@ import {
   Building2, Phone, Share2, RotateCcw, CheckCircle2, AlertTriangle, Receipt
 } from 'lucide-react';
 import ConfirmModal from './ConfirmModal';
+import { uploadImage } from '../../lib/storage';
 
 const MAX_LOGO_SIZE = 1 * 1024 * 1024; // 1MB
 
@@ -73,7 +74,7 @@ const SettingsPage: React.FC = () => {
     setForm(prev => ({ ...prev, [field]: isNaN(n) || n < 0 ? 0 : n }));
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     // اجازه می‌دهیم دوباره همان فایل انتخاب شود
     e.target.value = '';
@@ -88,15 +89,13 @@ const SettingsPage: React.FC = () => {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
+    try {
+      const url = await uploadImage(file, 'branding');
       setLogoError('');
-      setForm(prev => ({ ...prev, logo: String(reader.result) }));
-    };
-    reader.onerror = () => {
-      setLogoError('خواندن فایل ناموفق بود، لطفاً دوباره تلاش کنید');
-    };
-    reader.readAsDataURL(file);
+      setForm(prev => ({ ...prev, logo: url }));
+    } catch {
+      setLogoError('بارگذاری لوگو ناموفق بود، لطفاً دوباره تلاش کنید');
+    }
   };
 
   const clearLogo = () => {

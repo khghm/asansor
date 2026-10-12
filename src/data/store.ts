@@ -35,6 +35,14 @@ export interface ServiceRequest {
   date: string;
 }
 
+export interface Expense {
+  id: string;
+  title: string;
+  category: string;
+  amount: number;
+  date: string;
+}
+
 export type InvoiceItemType = 'product' | 'service';
 
 export interface InvoiceItem {

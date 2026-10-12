@@ -31,7 +31,7 @@ const AdminPanel: React.FC = () => {
     addProduct, updateProduct, deleteProduct, adjustStock,
     updateOrderStatus, deleteOrder,
     updateServiceStatus, deleteServiceRequest,
-    setAdmin
+    signOut, syncError, clearSyncError
   } = useStore();
 
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -107,8 +107,8 @@ const AdminPanel: React.FC = () => {
     completed: 'bg-emerald-100 text-emerald-700'
   };
 
-  const handleLogout = () => {
-    setAdmin(false);
+  const handleLogout = async () => {
+    await signOut();
     navigate('/');
   };
 
@@ -184,6 +184,17 @@ const AdminPanel: React.FC = () => {
         }`}>
           <CheckCircle2 size={16} className="sm:w-[18px] sm:h-[18px]" />
           <span className="text-xs sm:text-sm">{toast.message}</span>
+        </div>
+      )}
+
+      {/* خطای همگام‌سازی با دیتابیس */}
+      {syncError && (
+        <div className="fixed bottom-4 left-4 right-4 sm:right-auto sm:max-w-md z-50 px-4 py-3 rounded-xl shadow-xl bg-red-600 text-white text-sm flex items-start gap-3">
+          <AlertCircle size={18} className="shrink-0 mt-0.5" />
+          <span className="flex-1 leading-6">{syncError}</span>
+          <button onClick={clearSyncError} className="shrink-0 p-1 hover:bg-white/10 rounded-lg" aria-label="بستن">
+            <X size={16} />
+          </button>
         </div>
       )}
 
