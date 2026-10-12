@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Product } from '../../data/store';
 import { X, Package, Upload, ImageIcon, Trash2 } from 'lucide-react';
+import { uploadImage } from '../../lib/storage';
 
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
 
@@ -31,8 +32,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageError, setImageError] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     // اجازه می‌دهیم دوباره همان فایل انتخاب شود
     e.target.value = '';
@@ -47,15 +49,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
+    setUploading(true);
+    try {
+      const url = await uploadImage(file, 'products');
       setImageError('');
-      setForm(prev => ({ ...prev, image: String(reader.result) }));
-    };
-    reader.onerror = () => {
-      setImageError('خواندن فایل ناموفق بود، لطفاً دوباره تلاش کنید');
-    };
-    reader.readAsDataURL(file);
+      setForm(prev => ({ ...prev, image: url }));
+    } catch {
+      setImageError('بارگذاری تصویر ناموفق بود، لطفاً دوباره تلاش کنید');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const clearImage = () => {
@@ -171,6 +174,18 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
           </div>
 
           <div>
+            <label className="block text-sm font-bold text-slate-700 mb-2">قیمت تمام‌شده (تومان، اختیاری)</label>
+            <input
+              type="number"
+              min="0"
+              value={form.costPrice ?? ''}
+              onChange={e => setForm({ ...form, costPrice: e.target.value === '' ? undefined : Number(e.target.value) })}
+              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
+              placeholder="برای محاسبه سود در بخش حسابداری"
+            />
+          </div>
+
+          <div>
             <label className="block text-sm font-bold text-slate-700 mb-2">آستانه هشدار موجودی کم (اختیاری)</label>
             <input
               type="number"
@@ -236,10 +251,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSave, onClose }) =
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+              disabled={uploading}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 hover:border-blue-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all disabled:opacity-60"
             >
               <Upload size={18} />
-              {form.image ? 'انتخاب تصویر دیگر از روی هارد' : 'بارگذاری تصویر از روی هارد'}
+              {uploading ? 'در حال بارگذاری...' : form.image ? 'انتخاب تصویر دیگر از روی هارد' : 'بارگذاری تصویر از روی هارد'}
             </button>
             {imageError && (
               <p className="mt-2 text-xs font-medium text-red-600">{imageError}</p>

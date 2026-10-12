@@ -88,19 +88,12 @@ const Row: React.FC<{ cells: React.ReactNode[]; head?: boolean; total?: boolean 
 );
 
 const AccountingPage: React.FC = () => {
-  const { products, orders, invoices } = useStore();
+  const { products, orders, invoices, expenses, addExpense: saveExpense, deleteExpense } = useStore();
   const [openSection, setOpenSection] = useState<SectionId>('overview');
 
   const toggle = (id: SectionId) => setOpenSection(cur => (cur === id ? ('' as SectionId) : id));
 
-  // ---------- هزینه‌های عملیاتی (دفتر کل) ----------
-  const [expenses, setExpenses] = useState<{ id: string; title: string; category: string; amount: number; date: string }[]>(() => {
-    try { return JSON.parse(localStorage.getItem('armand_expenses') || '[]'); } catch { return []; }
-  });
-  const persistExpenses = (list: typeof expenses) => {
-    setExpenses(list);
-    try { localStorage.setItem('armand_expenses', JSON.stringify(list)); } catch { /* ignore */ }
-  };
+  // هزینه‌های عملیاتی (دفتر کل) از دیتابیس و از طریق StoreContext مدیریت می‌شود
 
   // ---------- موتور محاسبات مالی ----------
   const data = useMemo(() => {
@@ -209,7 +202,7 @@ const AccountingPage: React.FC = () => {
   const addExpense = () => {
     const amt = Number(expForm.amount);
     if (!expForm.title.trim() || !amt || amt <= 0) return;
-    persistExpenses([{ id: String(Date.now()), title: expForm.title.trim(), category: expForm.category, amount: Math.round(amt), date: expForm.date }, ...expenses]);
+    saveExpense({ id: String(Date.now()), title: expForm.title.trim(), category: expForm.category, amount: Math.round(amt), date: expForm.date });
     setExpForm({ title: '', category: expForm.category, amount: '', date: expForm.date });
   };
   const expenseCategories = ['اداری', 'اجاره', 'حقوق', 'حمل و نقل', 'بازاریابی', 'تعمیرات', 'متفرقه'];
@@ -460,7 +453,7 @@ const AccountingPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <b className="tabular-nums text-red-600">{faNum(e.amount)}</b>
-                    <button onClick={() => persistExpenses(expenses.filter(x => x.id !== e.id))} title="حذف"
+                    <button onClick={() => deleteExpense(e.id)} title="حذف"
                       className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center">×</button>
                   </div>
                 </div>

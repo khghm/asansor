@@ -1,43 +1,36 @@
 import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 import { Link } from 'react-router-dom';
-import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, Package } from 'lucide-react';
+import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, Package, AlertCircle } from 'lucide-react';
 import ImageWithFallback from '../components/ImageWithFallback';
 
+const inputCls =
+  'w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm bg-white';
+
 const CartPage: React.FC = () => {
-  const { cart, removeFromCart, updateCartQuantity, clearCart, cartTotal, addOrder, adjustStock } = useStore();
+  const { cart, removeFromCart, updateCartQuantity, clearCart, cartTotal, placeOrder } = useStore();
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
+  const [customer, setCustomer] = useState({ name: '', phone: '', address: '' });
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fa-IR').format(price) + ' تومان';
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
     setIsProcessing(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const order = {
-      id: 'ORD-' + Date.now(),
-      customerName: 'مشتری وب‌سایت',
-      customerPhone: '09120000000',
-      customerAddress: 'آدرس ثبت نشده',
-      items: cart.map(item => ({
-        productId: item.product.id,
-        productName: item.product.name,
-        quantity: item.quantity,
-        price: item.product.price
-      })),
-      total: cartTotal,
-      status: 'pending' as const,
-      date: new Date().toLocaleDateString('fa-IR')
-    };
-    
-    addOrder(order);
-    // کسر عملیاتی موجودی انبار پس از ثبت سفارش
-    cart.forEach(item => adjustStock(item.product.id, -item.quantity));
-    clearCart();
+    const err = await placeOrder(
+      { name: customer.name.trim(), phone: customer.phone.trim(), address: customer.address.trim() },
+      new Date().toLocaleDateString('fa-IR')
+    );
     setIsProcessing(false);
+    if (err) {
+      setError(err);
+      return;
+    }
     setOrderPlaced(true);
   };
 
@@ -49,8 +42,8 @@ const CartPage: React.FC = () => {
         </div>
         <h2 className="text-3xl font-black text-slate-900 mb-4">سفارش شما ثبت شد!</h2>
         <p className="text-slate-500 mb-10 leading-7">به زودی برای هماهنگی ارسال با شما تماس خواهیم گرفت.</p>
-        <Link 
-          to="/products" 
+        <Link
+          to="/products"
           className="inline-flex items-center gap-2 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-7 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/30"
         >
           <ArrowRight size={18} />
@@ -68,8 +61,8 @@ const CartPage: React.FC = () => {
         </div>
         <h2 className="text-3xl font-black text-slate-900 mb-4">سبد خرید خالی است</h2>
         <p className="text-slate-500 mb-10">هنوز محصولی به سبد خرید اضافه نکرده‌اید.</p>
-        <Link 
-          to="/products" 
+        <Link
+          to="/products"
           className="inline-flex items-center gap-2 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-7 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/30"
         >
           <ShoppingBag size={18} />
@@ -128,15 +121,53 @@ const CartPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Total */}
-        <div className="bg-gradient-to-l from-slate-50 to-slate-100/50 p-4 sm:p-5 lg:p-6 border-t border-slate-200">
+        {/* Customer info + total */}
+        <form onSubmit={handleCheckout} className="bg-gradient-to-l from-slate-50 to-slate-100/50 p-4 sm:p-5 lg:p-6 border-t border-slate-200">
+          <h2 className="font-black text-slate-900 mb-3 text-sm sm:text-base">مشخصات تحویل‌گیرنده</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <input
+              required
+              value={customer.name}
+              onChange={e => setCustomer(c => ({ ...c, name: e.target.value }))}
+              className={inputCls}
+              placeholder="نام و نام خانوادگی"
+              disabled={isProcessing}
+            />
+            <input
+              required
+              type="tel"
+              dir="ltr"
+              value={customer.phone}
+              onChange={e => setCustomer(c => ({ ...c, phone: e.target.value }))}
+              className={inputCls}
+              placeholder="شماره تماس (09xxxxxxxxx)"
+              disabled={isProcessing}
+            />
+          </div>
+          <textarea
+            required
+            rows={2}
+            value={customer.address}
+            onChange={e => setCustomer(c => ({ ...c, address: e.target.value }))}
+            className={`${inputCls} resize-none mb-4`}
+            placeholder="آدرس کامل"
+            disabled={isProcessing}
+          />
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4 flex items-start gap-2 text-sm text-red-600">
+              <AlertCircle size={16} className="shrink-0 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+
           <div className="flex items-center justify-between mb-3 sm:mb-4 lg:mb-5">
             <span className="text-slate-600 font-medium text-sm sm:text-base">جمع کل:</span>
             <span className="text-lg sm:text-xl lg:text-2xl font-black text-orange-600">{formatPrice(cartTotal)}</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button
-              onClick={handleCheckout}
+              type="submit"
               disabled={isProcessing}
               className="flex-1 bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-400 text-white px-6 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
             >
@@ -153,6 +184,7 @@ const CartPage: React.FC = () => {
               )}
             </button>
             <button
+              type="button"
               onClick={clearCart}
               disabled={isProcessing}
               className="sm:w-auto bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 px-6 py-3.5 rounded-xl font-medium transition-all"
@@ -160,7 +192,7 @@ const CartPage: React.FC = () => {
               پاک کردن سبد
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

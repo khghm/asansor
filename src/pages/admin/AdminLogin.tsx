@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../context/StoreContext';
-import { Lock, Eye, EyeOff, AlertCircle, Building2 } from 'lucide-react';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 const AdminLogin: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { setAdmin } = useStore();
+  const { signIn } = useStore();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -17,15 +18,13 @@ const AdminLogin: React.FC = () => {
     setError('');
     setIsLoading(true);
 
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    if (username === 'admin' && password === 'admin123') {
-      setAdmin(true);
-      navigate('/admin');
-    } else {
-      setError('نام کاربری یا رمز عبور اشتباه است');
+    const err = await signIn(email, password);
+    if (err) {
+      setError(err);
       setIsLoading(false);
+      return;
     }
+    navigate('/admin');
   };
 
   return (
@@ -39,6 +38,13 @@ const AdminLogin: React.FC = () => {
           <p className="text-slate-500 text-sm mt-2">اطلاعات ورود خود را وارد کنید</p>
         </div>
 
+        {!isSupabaseConfigured && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5 text-xs text-amber-700 leading-6">
+            اتصال به Supabase تنظیم نشده است. فایل <code className="font-mono">.env</code> را بر اساس{' '}
+            <code className="font-mono">.env.example</code> بسازید و برنامه را دوباره اجرا کنید.
+          </div>
+        )}
+
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-5 flex items-center gap-3 animate-scale-in">
             <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0">
@@ -50,13 +56,15 @@ const AdminLogin: React.FC = () => {
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">نام کاربری</label>
+            <label className="block text-sm font-bold text-slate-700 mb-2">ایمیل</label>
             <input
-              type="text"
-              value={username}
-              onChange={e => { setUsername(e.target.value); setError(''); }}
+              type="email"
+              dir="ltr"
+              autoComplete="username"
+              value={email}
+              onChange={e => { setEmail(e.target.value); setError(''); }}
               className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-              placeholder="admin"
+              placeholder="admin@example.com"
               disabled={isLoading}
             />
           </div>
@@ -65,6 +73,8 @@ const AdminLogin: React.FC = () => {
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
+                dir="ltr"
+                autoComplete="current-password"
                 value={password}
                 onChange={e => { setPassword(e.target.value); setError(''); }}
                 className="w-full px-4 py-3 pl-11 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
@@ -83,7 +93,7 @@ const AdminLogin: React.FC = () => {
           </div>
           <button
             type="submit"
-            disabled={isLoading || !username || !password}
+            disabled={isLoading || !email || !password}
             className="w-full bg-gradient-to-l from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-400 disabled:cursor-not-allowed text-white px-6 py-3.5 rounded-xl font-bold transition-all duration-200 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 flex items-center justify-center gap-2"
           >
             {isLoading ? (
@@ -96,14 +106,6 @@ const AdminLogin: React.FC = () => {
             )}
           </button>
         </form>
-
-        <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-          <p className="text-xs text-amber-700 leading-6">
-            <strong className="font-bold">اطلاعات ورود دمو:</strong><br />
-            نام کاربری: <code className="bg-amber-100 px-1.5 py-0.5 rounded font-mono">admin</code><br />
-            رمز عبور: <code className="bg-amber-100 px-1.5 py-0.5 rounded font-mono">admin123</code>
-          </p>
-        </div>
       </div>
     </div>
   );

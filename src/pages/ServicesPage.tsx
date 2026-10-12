@@ -13,19 +13,26 @@ const ServicesPage: React.FC = () => {
   });
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
 
-    addServiceRequest({
+    const err = await addServiceRequest({
       id: 'SRV-' + Date.now(),
       ...form,
       status: 'new',
       date: new Date().toLocaleDateString('fa-IR')
     });
-    
+
+    if (err) {
+      setError(err);
+      setIsSubmitting(false);
+      return;
+    }
+
     setSubmitted(true);
     setIsSubmitting(false);
     setForm({ name: '', phone: '', address: '', serviceType: 'repair', description: '' });
@@ -113,6 +120,12 @@ const ServicesPage: React.FC = () => {
                 <p className="font-bold text-emerald-800 text-sm">درخواست شما با موفقیت ثبت شد</p>
                 <p className="text-emerald-600 text-xs mt-0.5">به زودی با شما تماس خواهیم گرفت</p>
               </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-sm text-red-600 font-medium">
+              {error}
             </div>
           )}
 

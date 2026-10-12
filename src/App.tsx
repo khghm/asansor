@@ -14,7 +14,14 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminPanel from './pages/admin/AdminPanel';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAdmin } = useStore();
+  const { isAdmin, authLoading } = useStore();
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
   if (!isAdmin) {
     return <Navigate to="/admin/login" replace />;
   }
